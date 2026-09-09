@@ -23,6 +23,9 @@ from pathlib import Path
 
 import numpy as np
 
+from tracing import flush as trace_flush
+from tracing import trace_retrieval
+
 ARMS = {
     "whole-file": "corpus/chunks.jsonl",
     "hybrid": "corpus/chunks-hybrid.jsonl",
@@ -59,6 +62,8 @@ def main() -> int:
     ap.add_argument("--budget", type=int, default=4800,
                     help="token budget for the equal-context metric")
     ap.add_argument("--k", type=int, default=5)
+    ap.add_argument("--trace", action="store_true",
+                    help="emit OpenInference retrieval spans to Phoenix")
     args = ap.parse_args()
 
     spec = json.load(open("eval/expected.json"))["questions"]
@@ -81,6 +86,12 @@ def main() -> int:
     for arm, npz in available.items():
         d = np.load(npz, allow_pickle=True)
         vecs, paths, tokens = d["vectors"], d["paths"], d["tokens"]
+        ids = d["ids"]
+        texts = {}
+        if args.trace:
+            src = ARMS[arm]
+            texts = {json.loads(l)["id"]: json.loads(l)["text"][:300]
+                     for l in Path(src).open()}
         rows = []
         for qi, q in enumerate(spec):
             order = rank(qvecs[qi], vecs)
@@ -95,6 +106,16 @@ def main() -> int:
                 "retrieved": [str(paths[i]) for i in order[:args.k]],
                 "missed": sorted(exp - files_at_k(order, paths, args.k)),
             })
+            if args.trace:
+                sims = vecs @ qvecs[qi]
+                trace_retrieval(
+                    q["q"], q["id"], arm,
+                    [{"id": str(ids[j]), "path": str(paths[j]),
+                      "score": sims[j], "tokens": int(tokens[j]),
+                      "preview": texts.get(str(ids[j]), "")}
+                     for j in order[:10]],
+                    q["expected"], {"at_k": rows[-1]["at_k"],
+                                    "at_budget": rows[-1]["at_budget"]})
         results[arm] = rows
 
     print(f"\n{'arm':<13}{'recall@'+str(args.k):>12}{'recall@'+str(args.budget)+'tok':>18}")
@@ -114,6 +135,9 @@ def main() -> int:
             line += f" {sum(r['at_budget'] for r in sub):>3}/{len(sub)}".rjust(8)
         print(line)
 
+    if args.trace:
+        trace_flush()
+        print("traces sent to Phoenix")
     Path("eval/results.json").write_text(json.dumps(
         {"budget": args.budget, "k": args.k, "arms": results}, indent=2))
     print("\nper-question detail written to eval/results.json")
