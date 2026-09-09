@@ -8,3 +8,4 @@ openinference-semantic-conventions>=0.1
 opentelemetry-sdk>=1.20
 opentelemetry-exporter-otlp>=1.20
 rank-bm25>=0.2
+anthropic>=0.40
