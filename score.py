@@ -62,13 +62,23 @@ def main() -> int:
     ap.add_argument("--budget", type=int, default=4800,
                     help="token budget for the equal-context metric")
     ap.add_argument("--k", type=int, default=5)
+    ap.add_argument("--retrieval", choices=("dense", "bm25", "rrf"),
+                    default="dense", help="retrieval mode; chunking is fixed "
+                    "by --arm so only this varies")
+    ap.add_argument("--strip-header", action="store_true",
+                    help="index BM25 on chunk bodies only, dropping the "
+                         "'# File:' header")
+    ap.add_argument("--arm", default=None,
+                    help="restrict to one arm, e.g. uniform-400")
+    ap.add_argument("--out", type=Path, default=Path("eval/results.json"))
     ap.add_argument("--trace", action="store_true",
                     help="emit OpenInference retrieval spans to Phoenix")
     args = ap.parse_args()
 
     spec = json.load(open("eval/expected.json"))["questions"]
+    arms = {args.arm: ARMS[args.arm]} if args.arm else ARMS
     available = {n: Path(p).with_suffix(".npz")
-                 for n, p in ARMS.items() if Path(p).with_suffix(".npz").exists()}
+                 for n, p in arms.items() if Path(p).with_suffix(".npz").exists()}
     if not available:
         raise SystemExit("no vectors found; run embed.py on each arm first")
 
@@ -92,9 +102,25 @@ def main() -> int:
             src = ARMS[arm]
             texts = {json.loads(l)["id"]: json.loads(l)["text"][:300]
                      for l in Path(src).open()}
+        bm25 = None
+        if args.retrieval in ("bm25", "rrf"):
+            from lexical import Bm25Index, rrf as fuse
+            chunk_texts = [json.loads(l)["text"] for l in Path(arms[arm]).open()]
+            if args.strip_header:
+                chunk_texts = [t.split("\n\n", 1)[1] if "\n\n" in t else t
+                               for t in chunk_texts]
+            bm25 = Bm25Index(chunk_texts)
+
         rows = []
         for qi, q in enumerate(spec):
-            order = rank(qvecs[qi], vecs)
+            dense_order = rank(qvecs[qi], vecs)
+            if args.retrieval == "dense":
+                order = dense_order
+            elif args.retrieval == "bm25":
+                order = np.argsort(-bm25.scores(q["q"]))
+            else:
+                lex = np.argsort(-bm25.scores(q["q"]))
+                order = np.array(fuse([list(dense_order), list(lex)]))
             exp = set(q["expected"])
             rows.append({
                 "id": q["id"], "section": section_of(q["id"]),
@@ -118,6 +144,7 @@ def main() -> int:
                                     "at_budget": rows[-1]["at_budget"]})
         results[arm] = rows
 
+    print(f"\nretrieval: {args.retrieval}")
     print(f"\n{'arm':<13}{'recall@'+str(args.k):>12}{'recall@'+str(args.budget)+'tok':>18}")
     for arm, rows in results.items():
         k = sum(r["at_k"] for r in rows)
@@ -138,9 +165,10 @@ def main() -> int:
     if args.trace:
         trace_flush()
         print("traces sent to Phoenix")
-    Path("eval/results.json").write_text(json.dumps(
-        {"budget": args.budget, "k": args.k, "arms": results}, indent=2))
-    print("\nper-question detail written to eval/results.json")
+    args.out.write_text(json.dumps(
+        {"budget": args.budget, "k": args.k, "retrieval": args.retrieval,
+         "arms": results}, indent=2))
+    print(f"\nper-question detail written to {args.out}")
     return 0
 
 

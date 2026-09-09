@@ -1,0 +1,502 @@
+{
+  "budget": 4800,
+  "k": 5,
+  "retrieval": "rrf",
+  "arms": {
+    "uniform-400": [
+      {
+        "id": 1,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+          "ios/CardWise/Sources/Theme.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 2,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/AppState.kt"
+        ]
+      },
+      {
+        "id": 3,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CatalogStore.swift",
+          "app/src/main/java/com/cardwise/domain/Models.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+          "ios/CardWiseKit/Package.swift"
+        ],
+        "missed": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+        ]
+      },
+      {
+        "id": 4,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/data/CatalogStore.kt",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+          "app/src/main/java/com/cardwise/domain/SeedData.kt",
+          "app/src/main/java/com/cardwise/domain/Models.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 5,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+          "app/src/main/java/com/cardwise/ui/components/CardFace.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt"
+        ]
+      },
+      {
+        "id": 6,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "supabase/config.toml",
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseClient.swift",
+          "supabase/config.toml",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 7,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "admin/card-form.html",
+          "admin/js/card-form.js",
+          "admin/js/card-form.js",
+          "admin/cards.html",
+          "admin/card-form.html"
+        ],
+        "missed": []
+      },
+      {
+        "id": 8,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+          "supabase/schema.sql",
+          "supabase/migrations/20260708000000_init.sql",
+          "app/src/main/java/com/cardwise/domain/Models.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 9,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "ios/CardWise/Sources/RootView.swift",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 10,
+        "section": "locate",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "ios/CardWise/Sources/WalletView.swift",
+          "ios/CardWise/Sources/RootView.swift",
+          "ios/CardWise/Sources/Theme.swift",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 11,
+        "section": "explain",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift"
+        ],
+        "missed": []
+      },
+      {
+        "id": 12,
+        "section": "explain",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/nav/Routes.kt",
+          "store-assets/privacy-policy.md",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "docs/plans/region-separated-catalog.md",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/data/CatalogStore.kt"
+        ]
+      },
+      {
+        "id": 13,
+        "section": "explain",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "ios/CardWise/Sources/RootView.swift",
+          "ios/CardWise/Sources/HomeView.swift",
+          "app/src/main/java/com/cardwise/ui/nav/Routes.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/AppState.kt"
+        ]
+      },
+      {
+        "id": 14,
+        "section": "explain",
+        "n_expected": 1,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+        ],
+        "missed": [
+          "supabase/migrations/20260708000000_init.sql"
+        ]
+      },
+      {
+        "id": 15,
+        "section": "explain",
+        "n_expected": 2,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "ios/CardWise/Sources/WalletView.swift",
+          "docs/plans/add-card-list-scale-150.md"
+        ],
+        "missed": []
+      },
+      {
+        "id": 16,
+        "section": "explain",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "docs/plans/benefit-change-watcher.md",
+          "supabase/migrations/20260708000000_init.sql",
+          "docs/plans/benefit-change-watcher.md",
+          "docs/plans/region-separated-catalog.md",
+          "docs/plans/region-separated-catalog.md"
+        ],
+        "missed": [
+          "supabase/migrations/20260718100000_channel_rewards.sql"
+        ]
+      },
+      {
+        "id": 17,
+        "section": "explain",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "supabase/config.toml",
+          "docs/api.md",
+          "admin/README.md",
+          "supabase/config.toml",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt"
+        ],
+        "missed": [
+          "admin/js/card-form.js",
+          "admin/js/supabaseClient.js"
+        ]
+      },
+      {
+        "id": 18,
+        "section": "explain",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          ".github/workflows/ci.yml",
+          "ios/CardWise/UITests/SmokeTests.swift",
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift"
+        ],
+        "missed": []
+      },
+      {
+        "id": 19,
+        "section": "explain",
+        "n_expected": 1,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt",
+          "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt"
+        ],
+        "missed": []
+      },
+      {
+        "id": 20,
+        "section": "explain",
+        "n_expected": 3,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "ios/CardWiseKit/Package.swift",
+          "ios/CardWise/Sources/CardWiseApp.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+          "ios/CardWise/Sources/RegionResolver.swift",
+          "ios/CardWise/Sources/AppViewModel.swift"
+        ],
+        "missed": [
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+          "ios/README.md"
+        ]
+      },
+      {
+        "id": 21,
+        "section": "trace",
+        "n_expected": 3,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/AppState.kt"
+        ]
+      },
+      {
+        "id": 22,
+        "section": "trace",
+        "n_expected": 4,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "ios/CardWise/Sources/AppViewModel.swift",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/AppState.kt",
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt"
+        ]
+      },
+      {
+        "id": 23,
+        "section": "trace",
+        "n_expected": 3,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "supabase/schema.sql",
+          "supabase/migrations/20260708000000_init.sql",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt",
+          "docs/implementation-status.md"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/data/CardWiseRepository.kt"
+        ]
+      },
+      {
+        "id": 24,
+        "section": "trace",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "supabase/schema.sql",
+          "supabase/migrations/20260708000000_init.sql",
+          "supabase/schema.sql",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "supabase/snippets/add_pnc_cards.sql"
+        ],
+        "missed": [
+          "admin/js/card-form.js"
+        ]
+      },
+      {
+        "id": 25,
+        "section": "trace",
+        "n_expected": 5,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/MainActivity.kt"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+        ]
+      },
+      {
+        "id": 26,
+        "section": "cross-platform",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+          "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift"
+        ],
+        "missed": [
+          "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+        ]
+      },
+      {
+        "id": 27,
+        "section": "cross-platform",
+        "n_expected": 2,
+        "at_k": true,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "ios/CardWise/Sources/SettingsView.swift",
+          "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+          "ios/CardWise/Sources/SettingsView.swift"
+        ],
+        "missed": []
+      },
+      {
+        "id": 28,
+        "section": "cross-platform",
+        "n_expected": 2,
+        "at_k": false,
+        "at_budget": true,
+        "retrieved": [
+          "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+          "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt"
+        ],
+        "missed": [
+          "ios/CardWise/Sources/WalletView.swift"
+        ]
+      },
+      {
+        "id": 29,
+        "section": "cross-platform",
+        "n_expected": 4,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "supabase/schema.sql",
+          "supabase/migrations/20260708000000_init.sql",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+          "supabase/schema.sql",
+          "admin/cards.html"
+        ],
+        "missed": [
+          "admin/js/card-form.js",
+          "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+        ]
+      },
+      {
+        "id": 30,
+        "section": "cross-platform",
+        "n_expected": 3,
+        "at_k": false,
+        "at_budget": false,
+        "retrieved": [
+          "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+          ".github/workflows/ci.yml",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+          "app/src/main/java/com/cardwise/MainActivity.kt",
+          "ios/CardWise/Sources/AppViewModel.swift"
+        ],
+        "missed": [
+          "admin/js/card-form.js",
+          "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+          "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift"
+        ]
+      }
+    ]
+  }
+}
