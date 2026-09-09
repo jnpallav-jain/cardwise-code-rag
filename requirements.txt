@@ -1,3 +1,4 @@
+python-dotenv>=1.0
 tiktoken>=0.7
 tree_sitter>=0.23
 tree_sitter_language_pack>=0.4
