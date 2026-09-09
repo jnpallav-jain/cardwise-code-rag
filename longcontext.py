@@ -36,14 +36,17 @@ MODEL = "claude-sonnet-5"
 SYSTEM = """You are answering questions about a codebase. The complete source \
 is provided below, each file preceded by its path.
 
-Answer the question, then cite every file your answer depends on.
+Answer the question concisely -- a few sentences, or a short list. Do not \
+reproduce large blocks of code.
 
-End your reply with exactly one line in this form, listing repository-relative \
-paths, comma-separated:
+Your reply MUST begin with exactly one line in this form, listing \
+repository-relative paths, comma-separated:
 
 CITED: path/one.kt, path/two.swift
 
-Cite only files you actually used. Do not pad the list."""
+Then give the answer. Cite only files you actually used; do not pad the list.
+
+The CITED line comes first so that it survives even if the answer is long."""
 
 
 def build_corpus_block(path: Path) -> str:
@@ -59,7 +62,7 @@ def parse_cited(text: str) -> list[str]:
     m = re.findall(r"^CITED:\s*(.+)$", text, re.MULTILINE)
     if not m:
         return []
-    return [p.strip() for p in m[-1].split(",") if p.strip()]
+    return [p.strip() for p in m[0].split(",") if p.strip()]
 
 
 def main() -> int:
@@ -87,7 +90,11 @@ def main() -> int:
     for q in spec:
         resp = client.messages.create(
             model=args.model,
-            max_tokens=1024,
+            # 4096, not 2048: this model emits a thinking block first, and
+            # at 2048 Q26 spent the whole budget thinking and returned no text
+            # block at all -- scoring as zero citations, indistinguishable
+            # from a genuine miss.
+            max_tokens=4096,
             system=[
                 {"type": "text", "text": SYSTEM},
                 # Cached: the other 29 questions read this rather than re-paying.
@@ -98,6 +105,11 @@ def main() -> int:
         )
         answer = "".join(b.text for b in resp.content if b.type == "text")
         cited = parse_cited(answer)
+        # A response cut off by max_tokens loses its citations and scores as a
+        # zero -- indistinguishable from a genuine miss. Surface it instead.
+        truncated = resp.stop_reason == "max_tokens"
+        if truncated and not cited:
+            print(f"  !! Q{q['id']} hit max_tokens with no CITED line")
         exp = set(q["expected"])
         section = ("locate" if q["id"] < 11 else "explain" if q["id"] < 21
                    else "trace" if q["id"] < 26 else "cross-platform")
@@ -107,6 +119,8 @@ def main() -> int:
             "missed": sorted(exp - set(cited)),
             "covered": exp <= set(cited),
             "n_cited": len(cited),
+            "truncated": truncated,
+            "stop_reason": resp.stop_reason,
             "answer": answer[:1500],
             "usage": {"in": resp.usage.input_tokens,
                       "out": resp.usage.output_tokens,

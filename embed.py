@@ -35,11 +35,14 @@ def load_dotenv(path: Path = Path(".env")) -> None:
         k, v = line.split("=", 1)
         os.environ.setdefault(k.strip(), v.strip().strip("'\""))
 
+# python-dotenv if present, but imported under another name: binding it to
+# `load_dotenv` shadowed the function above, and its no-arg form inspects the
+# caller's stack frame, which fails for scripts fed in on stdin.
 try:
-    from dotenv import load_dotenv
-    load_dotenv(Path(__file__).with_name(".env"))
+    from dotenv import load_dotenv as _dotenv_load
+    _dotenv_load(Path(__file__).with_name(".env"))
 except ImportError:
-    pass  # fall back to whatever is already exported
+    pass  # fall back to the reader above, or to whatever is already exported
 
 MODEL = "voyage-code-4"
 BATCH = 64

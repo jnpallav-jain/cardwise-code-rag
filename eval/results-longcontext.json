@@ -1,0 +1,712 @@
+{
+  "model": "claude-sonnet-5",
+  "metric": "citation coverage",
+  "rows": [
+    {
+      "id": 1,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+        "app/src/main/java/com/cardwise/domain/MerchantResolver.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/MerchantResolver.swift",
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 5,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/domain/RecommendationEngine.kt, ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift, app/src/main/java/com/cardwise/domain/MerchantResolver.kt, ios/CardWiseKit/Sources/CardWiseKit/Domain/MerchantResolver.swift, app/src/main/java/com/cardwise/data/CardWiseRepository.kt\n\nThe card-picking logic lives in `RecommendationEngine` (Android: `app/src/main/java/com/cardwise/domain/RecommendationEngine.kt`, iOS: `ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift` \u2014 a 1:1 port).\n\n- `recommend(...)`: given a resolved merchant/category and the user's wallet, ranks every wallet card via `findRewardRule`, sorted by `rankValue` descending (name as tiebreaker), and returns the top card plus a human-readable reason (`buildReason`).\n- `findRewardRule(...)`: the actual precedence logic for a given template/category/channel \u2014 checks, in order: Discover's activated rotating category, the user's manually \"boosted\" 5% category, a merchant-exact scoped rule, then the best applicable category/`OTHER` rule (respecting online/offline channel), finally falling back to \"No listed reward\" (0.0) if nothing matches.\n- `bestByCategory(...)`: runs `recommend` once per `MerchantCategory` to build the \"best card by category\" cheat sheet.\n\nBefore ranking, the merchant name has to be turned into a category \u2014 that's `MerchantResolver` (`app/src/main/java/com/cardwise/domain/MerchantResolver.kt` / iOS equivalent), which normalizes input and m",
+      "usage": {
+        "in": 21,
+        "out": 772,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 2,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/MainActivity.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/AppState.kt, app/src/main/java/com/cardwise/MainActivity.kt\n\nOn Android, global UI state is held in `CardWiseViewModel` (in `app/src/main/java/com/cardwise/ui/AppState.kt`). It wraps a `CardWiseUiState` data class (merchant input, wallet, templates, recommendation, sync status, theme, etc.) inside a `MutableStateFlow`, exposed publicly as a read-only `StateFlow<CardWiseUiState>` called `uiState`.\n\nThis ViewModel is instantiated once per `MainActivity` (via `CardWiseViewModelFactory`, backed by `CardWiseRepository` for persistence), and `CardWiseApp` (the root Compose function) collects `uiState` with `collectAsState()` and passes slices of it down to each screen \u2014 so the single `StateFlow` in the ViewModel is the one source of truth for UI state across the whole app.",
+      "usage": {
+        "in": 18,
+        "out": 420,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 3,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 1,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift\n\nThe core domain models on iOS are defined in `ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift`, part of the `CardWiseKit` Swift package. This file defines `MerchantCategory`, `ThemeMode`, `ResolutionSource`, `PaymentChannel`, `CardTemplate`, `RewardRule`, `UserCard`, `MerchantResolution`, `RankedCard`, `RecommendationResult`, plus the `Region` and `KnownCards` helpers \u2014 mirroring the Android domain models in `app/src/main/java/com/cardwise/domain/Models.kt`.",
+      "usage": {
+        "in": 18,
+        "out": 255,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 4,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/SeedData.kt",
+        "app/src/main/assets/card_templates.json",
+        "app/src/main/assets/merchant_mappings.json",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+        "supabase/seed.sql",
+        "ios/README.md"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 6,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/domain/SeedData.kt, app/src/main/assets/card_templates.json, app/src/main/assets/merchant_mappings.json, ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift, supabase/seed.sql, ios/README.md\n\nSeed/demo data lives in a few places, each serving a different purpose:\n\n- **Android bundled fallback catalog**: `app/src/main/java/com/cardwise/domain/SeedData.kt` \u2014 the real first-launch/offline fallback used by `CatalogStore` when no synced cache exists. Contains `cardTemplates` (11 official card templates), `merchantMappings` (merchant\u2192category map), and `defaultWallet`.\n- **Android raw JSON assets**: `app/src/main/assets/card_templates.json` and `app/src/main/assets/merchant_mappings.json` \u2014 a smaller bundled dataset (3 cards, 17 merchants), separate from `SeedData.kt`.\n- **iOS test-only seed data**: `ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift` \u2014 mirrors Android's `SeedData.kt` fixtures purely for unit tests; per `ios/README.md`, the production iOS app has **no** bundled seed catalog (it syncs from Supabase on first launch).\n- **Backend seed for local Supabase dev**: `supabase/seed.sql` \u2014 inserts the same official card templates and merchant mappings into `official_card_templates`/`merchant_mappings` tables, loaded automatically via `supabase/config.toml`'s `db.seed` setting.",
+      "usage": {
+        "in": 16,
+        "out": 881,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 5,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt",
+        "app/src/main/java/com/cardwise/ui/components/CardFace.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt, app/src/main/java/com/cardwise/ui/components/CardFace.kt\n\nThe shared/reusable UI components on Android are defined primarily in:\n\n- **`app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt`** \u2014 contains most reusable composables: `ScreenContainer`, `CardWiseTopAppBar`, `MerchantSearchField`, `BestCardResult`, `BenefitPill`, `CategoryChips`, `ComparisonRow`, `CardConditionsSheet`, `TemplateRow`, `OfficialBadge`, and `EmptyState`.\n- **`app/src/main/java/com/cardwise/ui/components/CardFace.kt`** \u2014 defines the card-face visuals specifically: `CardFace` and `CardFaceSkeleton` (plus supporting animated text/skeleton helpers).\n\nBoth live under the `com.cardwise.ui.components` package, which is the dedicated location for shared UI building blocks used across the Home, Wallet, and Settings screens.",
+      "usage": {
+        "in": 22,
+        "out": 386,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 6,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/build.gradle.kts",
+        "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt",
+        "admin/js/config.js",
+        "admin/js/supabaseClient.js",
+        "ios/CardWise/project.yml",
+        "ios/CardWise/Sources/CardWiseApp.swift",
+        "ios/CardWise/Config.sample.xcconfig",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseClient.swift",
+        ".github/workflows/release.yml",
+        ".github/workflows/ios.yml",
+        "supabase/config.toml"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 11,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/build.gradle.kts, app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt, admin/js/config.js, admin/js/supabaseClient.js, ios/CardWise/project.yml, ios/CardWise/Sources/CardWiseApp.swift, ios/CardWise/Config.sample.xcconfig, ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseClient.swift, .github/workflows/release.yml, .github/workflows/ios.yml, supabase/config.toml\n\nSupabase connection details are configured differently per surface:\n\n- **Android app**: `app/build.gradle.kts` reads `cardwise.supabaseUrl` / `cardwise.supabaseAnonKey` from a local (gitignored) `local.properties` file and bakes them into `BuildConfig.SUPABASE_URL` / `BuildConfig.SUPABASE_ANON_KEY`, which `SupabaseClient.kt` uses as defaults. Blank values (no `local.properties`) keep the app offline.\n- **iOS app**: `ios/CardWise/Config.xcconfig` (copied from `Config.sample.xcconfig`, gitignored) supplies `SUPABASE_URL`/`SUPABASE_ANON_KEY` build settings; `project.yml` pipes them into the generated `Info.plist`, and `CardWiseApp.swift` reads them from `Bundle.main.infoDictionary` to construct `SupabaseClient`.\n- **Admin web tool**: `admin/js/config.js` hardcodes the public anon key/URL directly (used by `admin/js/supabaseClient.js`), since it's a static site with no build step.\n- **CI/CD**: `.github/workflows/release.yml` writes `local.properties` from the `SUPABASE_URL`/`SUPABASE_ANON_KEY` GitHub secrets before building the Android release; `.github/workflows/ios.yml` similarly writes `Config.xccon",
+      "usage": {
+        "in": 15,
+        "out": 1176,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 7,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "admin/card-form.html",
+        "admin/js/card-form.js",
+        "admin/cards.html"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 3,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: admin/card-form.html, admin/js/card-form.js, admin/cards.html\n\nThe admin form for adding/editing a card template is **`admin/card-form.html`**, backed by **`admin/js/card-form.js`**.\n\n- It's reached from `admin/cards.html` via the \"Add card\" button (`card-form.html`) or an \"Edit\" link per row (`card-form.html?id=<template id>`).\n- The form has fields for id, issuer, name, version, region, reviewed date, active flag, source URLs, and a dynamic list of reward rules (category, reward label, rank value, optional merchant key, channel, conditions).\n- `card-form.js` handles loading an existing row (`loadCard()`) when an `id` query param is present, populating the merchant-key datalist from `merchant_mappings`, collecting/validating the reward rules, and saving via `supabase.from('official_card_templates').update(...)` or `.insert(...)` before redirecting back to `cards.html`.",
+      "usage": {
+        "in": 23,
+        "out": 326,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 8,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "supabase/migrations/20260708000000_init.sql",
+        "supabase/schema.sql"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: supabase/migrations/20260708000000_init.sql, supabase/schema.sql\n\nThe `user_cards` table (a user's saved cards) is first defined in `supabase/migrations/20260708000000_init.sql`, the initial migration:\n\n```sql\ncreate table if not exists user_cards (\n  user_id uuid not null,\n  template_id text not null references official_card_templates(id),\n  nickname text,\n  is_discover_category_activated boolean not null default false,\n  active_discover_category text,\n  created_at timestamptz not null default now(),\n  primary key (user_id, template_id)\n);\n```\n\nwith `row level security` enabled but no anon-role policies yet (noted as \"locked until auth ships\"). This same definition is mirrored in the consolidated `supabase/schema.sql`. Note that this table is currently unused by the apps \u2014 the actual wallet persistence today is local-only (Android `SharedPreferences` in `CardWiseRepository.kt`, iOS `UserDefaults` in `CardWiseRepository.swift`).",
+      "usage": {
+        "in": 22,
+        "out": 391,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 9,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/MainActivity.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/AndroidManifest.xml",
+        "app/src/main/java/com/cardwise/ui/nav/Routes.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 4,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/MainActivity.kt, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, app/src/main/AndroidManifest.xml, app/src/main/java/com/cardwise/ui/nav/Routes.kt\n\nThe Android entry point is `MainActivity` (`app/src/main/java/com/cardwise/MainActivity.kt`), declared as the launcher activity in `app/src/main/AndroidManifest.xml` (intent-filter with `MAIN`/`LAUNCHER`). It creates the `CardWiseViewModel` and calls `setContent { CardWiseApp(viewModel) }`.\n\nThe actual navigation structure lives in `com.cardwise.ui.CardWiseApp` (`app/src/main/java/com/cardwise/ui/CardWiseApp.kt`):\n- It implements a bottom `NavigationBar` with three tabs (Home/Search, Wallet, Settings), each with its **own** back stack via `rememberNavBackStack` (Navigation 3).\n- Each tab's stack is rendered with `NavDisplay`, using route keys defined in `app/src/main/java/com/cardwise/ui/nav/Routes.kt` (`HomeRoute`, `WalletRoute`, `SettingsRoute` sealed interfaces).\n- Re-tapping the currently selected tab resets that tab's stack to its root (`resetToRoot()`).\n- A shared `CardWiseTopAppBar` shows a title derived from the current top-of-stack route and a back button when the stack depth > 1.\n- First-launch shows `WelcomeScreen` (onboarding) instead of the tab UI until dismissed.",
+      "usage": {
+        "in": 20,
+        "out": 605,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 10,
+      "section": "locate",
+      "n_expected": 1,
+      "cited": [
+        "ios/CardWise/Sources/WalletView.swift"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 1,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: ios/CardWise/Sources/WalletView.swift\n\nThe Wallet screen on iOS is implemented in `ios/CardWise/Sources/WalletView.swift`, which defines:\n\n- `WalletView` \u2014 the main wallet tab showing added cards (via `CardFaceView`), with \"Add card\" and \"Request a missing card\" buttons, wrapped in a `NavigationStack`.\n- `AddCardView` \u2014 the \"Add card\" sub-screen with search over the region-filtered template catalog.\n- `RequestCardView` \u2014 the \"Request a missing card\" form.\n\nNavigation between these is driven by the `WalletDestination` enum (`.addCard`, `.requestCard`) and wired up from `RootView.swift`, which hosts `WalletView` inside the app's `TabView`.",
+      "usage": {
+        "in": 20,
+        "out": 264,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 11,
+      "section": "explain",
+      "n_expected": 1,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "app/src/main/java/com/cardwise/domain/Models.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/domain/RecommendationEngine.kt, app/src/main/java/com/cardwise/domain/Models.kt\n\nThe engine (`RecommendationEngine.recommend`) ranks each wallet card by resolving a single best-matching `RewardRule` per card, then sorts all cards by that rule's numeric `rankValue` (descending, ties broken alphabetically by display name).\n\n**Inputs to the match, in priority order (`findRewardRule`):**\n1. **Discover activation** \u2014 if the card is the Discover it template and the user has activated that category as their rotating 5%, a fixed `5% cash back` rule wins outright.\n2. **User boost activation** \u2014 if the user manually marked this card's category as a personal 5% boost, that also wins outright (same fixed value).\n3. **Merchant-exact rule** \u2014 a rule scoped to both the resolved `category` *and* a specific `merchant` key (e.g. \"target\"), only if channel-compatible.\n4. **Best applicable general rule** \u2014 among rules with no merchant restriction that are channel-compatible and whose category is either the resolved category or the `OTHER` fallback, pick the highest `rankValue`; ties prefer the category-specific rule over `OTHER`.\n5. **Default fallback** \u2014 if nothing matches: `OTHER`/\"No listed reward\" at `rankValue = 0.0`.\n\n**Other scoring inputs:**\n- **Category** \u2014 from `MerchantResolution` (merchant lookup or user-picked category chip).\n- **Merchant key** \u2014 enables merchant-scoped rules (e.g. Target-specific rates) to beat generic category rules.\n- **Payme",
+      "usage": {
+        "in": 26,
+        "out": 1180,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 12,
+      "section": "explain",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "missed": [
+        "app/src/main/java/com/cardwise/data/CatalogStore.kt"
+      ],
+      "covered": false,
+      "n_cited": 4,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/CardWiseRepository.kt, app/src/main/java/com/cardwise/ui/AppState.kt, ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift, app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt\n\nUser-changeable settings and their persistence (Android: `SharedPreferences` file `cardwise_wallet`; iOS: `UserDefaults`, same key names for parity):\n\n- **Wallet cards** (add/remove): `wallet_ids` \u2014 a set of template IDs.\n- **Discover rotating-category activation + chosen categories** (for the Discover card specifically): `discover_active` (bool) and `discover_categories` (set of `MerchantCategory` names).\n- **Per-card 5% \"boost\" activation + chosen categories** (any other card): `boost_active_<templateId>` and `boost_categories_<templateId>`.\n- **App theme** (System/Light/Dark): `theme_mode`.\n- **Quarterly reminder enabled/disabled** (Settings \u2192 Card bonuses): `quarterly_reminder_enabled`. On Android this also schedules/cancels a WorkManager job (`QuarterlyReminder`); on iOS it schedules/cancels local notifications (`ReminderScheduler`) \u2014 those OS-level schedules are separate from the persisted boolean.\n- **Onboarding seen flag** (dismiss welcome screen): `onboarding_seen`.\n- **Card request form fields / submission state** \u2014 only kept in in-memory UI state (`CardWiseUiState`/`AppViewModel`), not persisted; submitted via Supabase `card_requests` table.\n\nNot persisted (session-only or auto-detected, not user settings that survive restart):\n",
+      "usage": {
+        "in": 19,
+        "out": 1192,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 13,
+      "section": "explain",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/data/CatalogStore.kt",
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "app/src/main/java/com/cardwise/domain/MerchantResolver.kt",
+        "ios/CardWise/Sources/HomeView.swift"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 7,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt, app/src/main/java/com/cardwise/ui/AppState.kt, app/src/main/java/com/cardwise/data/CardWiseRepository.kt, app/src/main/java/com/cardwise/data/CatalogStore.kt, app/src/main/java/com/cardwise/domain/RecommendationEngine.kt, app/src/main/java/com/cardwise/domain/MerchantResolver.kt, ios/CardWise/Sources/HomeView.swift\n\n**What the Home screen shows** (Android `HomeMainScreen`, iOS `HomeView`):\n- A subtitle and a merchant/place search field.\n- (India region only) an Online/In-store payment-channel toggle.\n- A \"Recommended\" hero card: the best card from the wallet for whatever was typed/selected, with its benefit, category, and a text explanation \u2014 or a loading skeleton during initial sync, or a \"choose a category\" prompt if the merchant couldn't be resolved.\n- If no recommendation yet: a row of \"quick category\" chips (Restaurant, Gas, Pharmacy, etc.) as a fallback way to pick a category.\n- A \"Your cards\" list: every wallet card ranked/compared for the current merchant/category (or an empty-state prompting the user to add cards).\n- A \"Best card by category\" link into the cheat-sheet screen.\n\n**Where the data comes from:**\n- All of this is driven by `CardWiseUiState`, held in `CardWiseViewModel` (`AppState.kt`), which delegates to `CardWiseRepository`.\n- **Wallet** (`repository.getWallet()`): the user's own added cards, persisted locally in SharedPreferences (`cardwise_wallet`) \u2014 never synced to a server.\n- **Card templ",
+      "usage": {
+        "in": 19,
+        "out": 1556,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 14,
+      "section": "explain",
+      "n_expected": 1,
+      "cited": [
+        "supabase/schema.sql",
+        "supabase/migrations/20260708000000_init.sql",
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+        "admin/js/categories.js"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 4,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: supabase/schema.sql, supabase/migrations/20260708000000_init.sql, app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt, admin/js/categories.js\n\nA reward category isn't a first-class DB column/enum \u2014 it's a plain **text string** embedded in JSON:\n\n- `official_card_templates.rewards_json` is a `jsonb` column holding an array of reward-rule objects, each with a `\"category\"` key whose value is a lowercase snake_case string (e.g. `\"restaurant\"`, `\"ev_charging\"`, `\"travel_flight\"`) that must match one of the app's `MerchantCategory` enum names, matched case-insensitively client-side (`SupabaseDtos.kt`'s `parseCategory`).\n- `merchant_mappings` has `category` as a plain `text` column (no enum/foreign-key constraint at the DB level) \u2014 same string values.\n\nThere is no Postgres enum type or lookup table for categories; the schema treats it as free text, and the admin UI (`admin/js/categories.js`'s `CATEGORIES` list) and the mobile clients enforce/validate the allowed set. Unknown category strings from a newer backend are simply dropped by older app versions rather than causing an error (a template whose rules are *all* unknown categories is dropped entirely).",
+      "usage": {
+        "in": 17,
+        "out": 679,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 15,
+      "section": "explain",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+        "ios/CardWise/Sources/AppViewModel.swift",
+        "ios/CardWise/Sources/WalletView.swift"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 7,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/CardWiseRepository.kt, app/src/main/java/com/cardwise/ui/AppState.kt, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt, ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift, ios/CardWise/Sources/AppViewModel.swift, ios/CardWise/Sources/WalletView.swift\n\nWhen a user taps \"Add\" on a template in the Add-card list, both platforms follow the same flow:\n\n1. **UI trigger**: `AddCardScreen`/`AddCardView` calls `onAddCard(templateId)`, which invokes the view model's `addCard(templateId)`.\n2. **ViewModel**: `CardWiseViewModel.addCard` (Android) / `AppViewModel.addCard` (iOS) calls `repository.addCard(templateId)` and then refreshes state.\n3. **Repository persistence**: `CardWiseRepository.addCard` reads the current wallet's template IDs, adds the new one to the set, and writes it back \u2014 SharedPreferences key `wallet_ids` on Android, `UserDefaults` key `\"wallet_ids\"` on iOS (same key name intentionally, per the iOS repo's comment).\n   - No default/demo wallet exists; the ID is just appended to whatever set is already stored.\n   - If the card had been added and removed before, its old Discover/boost activation prefs (`boost_active_<id>`, `boost_categories_<id>`, or the Discover-specific keys) are untouched by removal, so re-adding a previously-configured card restores its prior bonus-category settings.\n4. **State refresh**: the repository re-derives `getWallet()` (sorted by ",
+      "usage": {
+        "in": 19,
+        "out": 1471,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 16,
+      "section": "explain",
+      "n_expected": 2,
+      "cited": [
+        "supabase/migrations/20260708000000_init.sql",
+        "supabase/migrations/20260718100000_channel_rewards.sql"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: supabase/migrations/20260708000000_init.sql, supabase/migrations/20260718100000_channel_rewards.sql\n\n**Earliest migration** (`20260708000000_init.sql`) creates the initial schema:\n- Tables: `official_card_templates`, `merchant_mappings`, `card_requests`, and `user_cards`.\n- Grants (`select`/`insert`) for the `anon`/`authenticated` PostgREST roles.\n- Row Level Security enabled on all four tables, with policies allowing anyone to read active templates and merchant mappings, and anyone to insert a pending, user-less card request (`user_cards` gets no anon policy, so it's locked until auth ships).\n\n**Most recent migration** (`20260718100000_channel_rewards.sql`) re-models three existing India cards (`sbi_cashback`, `bob_cashback`, `axis_cashback`) to use the newer per-rule `channel` field instead of the old `online_retail` category hack \u2014 so their \"online spend\" cashback rules now match *any* category when the app's payment-channel toggle is set to Online, rather than being limited to the online_retail category. It upserts new `rewards_json` versions (bumping each template's `version`) for those three templates via idempotent `insert ... on conflict (id) do update`.",
+      "usage": {
+        "in": 23,
+        "out": 474,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 17,
+      "section": "explain",
+      "n_expected": 2,
+      "cited": [
+        "admin/js/supabaseClient.js",
+        "admin/js/config.js",
+        "admin/js/auth.js",
+        "admin/js/cards.js",
+        "admin/js/card-form.js",
+        "admin/js/merchants.js",
+        "supabase/migrations/20260711000000_admin_catalog_write_access.sql",
+        "supabase/migrations/20260713000000_admin_merchant_mappings_write_access.sql"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 8,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: admin/js/supabaseClient.js, admin/js/config.js, admin/js/auth.js, admin/js/cards.js, admin/js/card-form.js, admin/js/merchants.js, supabase/migrations/20260711000000_admin_catalog_write_access.sql, supabase/migrations/20260713000000_admin_merchant_mappings_write_access.sql\n\n**How it connects**\n\n- `admin/js/supabaseClient.js` creates a single Supabase JS client (`@supabase/supabase-js@2`, loaded from esm.sh) using `SUPABASE_URL`/`SUPABASE_ANON_KEY` from `admin/js/config.js` \u2014 the same public anon key used by the mobile apps, hardcoded in that file (not a secret).\n- All pages authenticate via Supabase Auth (`admin/js/auth.js`): `signInWithPassword` on the login page, `requireSession`/`getSession` guarding every other page (redirects to `index.html` if no session), and `signOut`. The DB restricts catalog writes via RLS to a single hardcoded email (`is_catalog_admin()` checks `auth.jwt() ->> 'email' = 'jnpallav.jain@gmail.com'` in the migrations), so the anon key alone can't write \u2014 it needs a logged-in session as that user.\n- Every subsequent request goes straight through the Supabase client to PostgREST (`.from(table).select/insert/update/eq(...)`) \u2014 there's no separate backend API.\n\n**What it sends**\n\n- `cards.js`: reads `official_card_templates` (`id, issuer, name, version, region, reviewed_at, is_active`, optionally filtered by region); toggles `is_active` via `update`.\n- `card-form.js`: reads/writes full rows of `official_card_templates` \u2014 `issuer, name, version, reg",
+      "usage": {
+        "in": 24,
+        "out": 923,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 18,
+      "section": "explain",
+      "n_expected": 1,
+      "cited": [
+        ".github/workflows/ci.yml"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 1,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: .github/workflows/ci.yml\n\nOn every push and pull request, the `ci.yml` workflow runs two jobs on Linux (Ubuntu) runners:\n\n1. **Android \u2014 unit tests + debug build**: sets up JDK 17 and Gradle, then runs `./gradlew testDebugUnitTest assembleDebug --no-daemon` (no secrets needed, since Supabase config defaults to blank and release signing is skipped without a keystore), and uploads the resulting debug APK as a workflow artifact.\n\n2. **Admin web \u2014 JS syntax check**: sets up Node 20 and runs `node --check` against every file in `admin/js/*.js` to catch syntax errors.\n\nThis is validation-only \u2014 it doesn't build/sign a release or deploy anything (that's handled separately by the manual-trigger `release.yml`, and iOS testing is manual-only via `ios.yml`).",
+      "usage": {
+        "in": 19,
+        "out": 333,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 19,
+      "section": "explain",
+      "n_expected": 1,
+      "cited": [
+        "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt",
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 2,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt, app/src/main/java/com/cardwise/domain/RecommendationEngine.kt\n\n`RecommendationEngineTest.kt` covers these edge cases:\n\n- **Discover rotating category**: inactive vs. active-and-matching category overriding the default best card (Walgreens/pharmacy, Shell/gas).\n- **Merchant resolution nuances**: partial/substring matches (Home Depot, ChargePoint), unresolvable merchants requiring a category picker, \"Uber Eats\" resolving to restaurant (not rideshare) vs. plain \"Uber\" resolving to rideshare, and longest-key-wins matching regardless of mapping insertion order.\n- **Category-specific vs. flat-rate tie-breaking**: grocery/streaming category winners beating flat-rate cards; a category with no matching rule falling back to the best flat/OTHER rate.\n- **Merchant-scoped reward rules**: an exact merchant match winning over a general category rule; the merchant-scoped rule *not* leaking to a different merchant in the same category; a merchant-scoped `OTHER` rule not leaking into unrelated categories; a `null` merchantKey falling back to the general category rule.\n- **Precedence ordering**: Discover-active rule still beating a merchant-exact rule; boost-activated (user-selected 5%) card winning its chosen category, and *not* applying when the category isn't selected or the boost is inactive.\n- **Missing/degenerate template data**: every seed template must have an `OTHER` fallback rule (invariant check); a template wi",
+      "usage": {
+        "in": 22,
+        "out": 874,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 20,
+      "section": "explain",
+      "n_expected": 3,
+      "cited": [
+        "ios/README.md",
+        "ios/CardWiseKit/Package.swift",
+        "ios/CardWise/project.yml",
+        "ios/CardWise/Sources/CardWiseApp.swift"
+      ],
+      "missed": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+      ],
+      "covered": false,
+      "n_cited": 4,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: ios/README.md, ios/CardWiseKit/Package.swift, ios/CardWise/project.yml, ios/CardWise/Sources/CardWiseApp.swift\n\n## Split\n\n**`CardWiseKit/`** \u2014 a standalone Swift Package (no UI, no third-party deps) containing:\n- **Domain layer**: `Models.swift` (CardTemplate, RewardRule, UserCard, MerchantCategory, Region, etc.), `MerchantResolver.swift`, `RecommendationEngine.swift` \u2014 pure, platform-agnostic business logic mirroring the Android `domain` package.\n- **Data layer**: `CardWiseRepository`, `CatalogStore` (disk-cached catalog, no bundled seed), `SupabaseClient` (PostgREST client), `SupabaseDtos` (Codable DTOs + mapping to domain models).\n- Its own test target (`CardWiseKitTests`) with fast unit tests (recommendation engine, DTO decoding, repository persistence) plus an opt-in live-backend test \u2014 runnable via `swift test` with no simulator needed.\n\n**`CardWise/`** \u2014 the actual app target (SwiftUI):\n- Views (`HomeView`, `WalletView`, `SettingsView`, `RootView`, `WelcomeView`, `Components.swift`, `Theme.swift`)\n- `AppViewModel` (the `@Observable` glue between `CardWiseKit`'s repository and SwiftUI)\n- App entry point (`CardWiseApp.swift`), which wires up `SupabaseClient`/`CardWiseRepository` from `CardWiseKit` and injects them into `AppViewModel`\n- iOS-only concerns: `RegionResolver` (StoreKit storefront detection), `ReminderScheduler` (UNUserNotificationCenter)\n- UI smoke tests (`UITests/SmokeTests.swift`)\n- Declared via `project.yml` (consumed by `xcodegen`) which lists `Car",
+      "usage": {
+        "in": 25,
+        "out": 817,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 21,
+      "section": "trace",
+      "n_expected": 3,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt"
+      ],
+      "missed": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+      ],
+      "covered": false,
+      "n_cited": 3,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/CardWiseRepository.kt, app/src/main/java/com/cardwise/ui/AppState.kt, app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt\n\nOn Android, `RecommendationEngine` is never called directly by the UI \u2014 it's wrapped by `CardWiseRepository`:\n\n- `CardWiseRepository` holds `private val engine = RecommendationEngine()` and exposes it through two methods: `recommend(input, fallbackCategory, channel)` and `bestByCategory(channel)`, which delegate to `engine.recommend(...)` / `engine.bestByCategory(...)`.\n- `CardWiseViewModel` (in `AppState.kt`) calls `repository.recommend(...)` inside `refreshRecommendation()` (triggered from `init`, `updateMerchant`, `selectFallbackCategory`, `setPaymentChannel`, `addCard`/`removeCard`, bonus/boost changes, etc.), and exposes `bestByCategory()` which calls `repository.bestByCategory(...)`.\n- The UI layer calls into the ViewModel: `HomeMainScreen`/`CheatSheetScreen` (in `HomeScreen.kt`) invoke `viewModel.bestByCategory` (passed in as `bestByCategory: () -> List<...>`), and merchant/category input changes flow through `viewModel.updateMerchant`/`selectFallbackCategory`/`setPaymentChannel`, which indirectly trigger the engine via `refreshRecommendation()`.",
+      "usage": {
+        "in": 17,
+        "out": 887,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 22,
+      "section": "trace",
+      "n_expected": 4,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 5,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/AppState.kt, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt, app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt, app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt\n\n`AppState.kt` defines `CardWiseUiState` and `CardWiseViewModel`. `CardWiseApp.kt` collects `uiState` from the view model and passes it down to each screen composable. The screens that receive/read `CardWiseUiState` are:\n\n- **`HomeMainScreen`** and **`CheatSheetScreen`** (HomeScreen.kt)\n- **`WalletCardsScreen`**, **`AddCardScreen`**, and **`RequestCardScreen`** (WalletScreen.kt)\n- **`SettingsMainScreen`**, **`CardBonusesScreen`**, and **`CategoryPickerScreen`** (SettingsScreen.kt)\n\n`WelcomeScreen` is the only main screen that does *not* take `uiState` (it only receives callbacks); `CardWiseApp` itself also reads `uiState` directly (e.g. for `showOnboarding`) before routing to these screens.",
+      "usage": {
+        "in": 13,
+        "out": 942,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 23,
+      "section": "trace",
+      "n_expected": 3,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt"
+      ],
+      "missed": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "covered": false,
+      "n_cited": 1,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt\n\nThe Android app reads from two Supabase tables via PostgREST:\n\n- **`official_card_templates`** \u2014 fetches active templates: `official_card_templates?is_active=eq.true&select=id,issuer,name,version,rewards_json,reviewed_at,source_urls,region`\n- **`merchant_mappings`** \u2014 fetches merchant-to-category mappings: `merchant_mappings?select=merchant_key,category`\n\nIt also writes (insert-only, not read) to `card_requests` when a user submits a missing-card request.",
+      "usage": {
+        "in": 15,
+        "out": 287,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 24,
+      "section": "trace",
+      "n_expected": 2,
+      "cited": [
+        "admin/js/card-form.js",
+        "admin/js/cards.js",
+        "supabase/migrations/20260711000000_admin_catalog_write_access.sql",
+        "supabase/migrations/20260708000000_init.sql",
+        "supabase/seed.sql",
+        "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 6,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: admin/js/card-form.js, admin/js/cards.js, supabase/migrations/20260711000000_admin_catalog_write_access.sql, supabase/migrations/20260708000000_init.sql, supabase/seed.sql, app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt\n\nThere's no single \"cards\" table \u2014 the catalog table is `official_card_templates` in Supabase. Its writers are:\n\n1. **Admin web UI** (`admin/js/card-form.js`) \u2014 inserts a new row (`supabase.from('official_card_templates').insert(...)`) or updates an existing one (`.update(payload).eq('id', editingId)`) when the admin saves the card form.\n2. **Admin web UI** (`admin/js/cards.js`) \u2014 `toggleActive()` does a partial `.update({ is_active: nextValue })` to activate/deactivate a template.\n3. **SQL migrations** (`supabase/migrations/*.sql`) and `supabase/seed.sql` \u2014 many one-off migrations do idempotent `insert ... on conflict (id) do update ...` to seed/correct card data directly via SQL (e.g. adding PNC, Bilt, Apple Card, India cards, etc.).\n\nAccess control: only the pre-created admin auth user (`jnpallav.jain@gmail.com`, enforced via `is_catalog_admin()` in `20260711000000_admin_catalog_write_access.sql`) has `insert`/`update` grants through PostgREST; the anon role (used by the Android/iOS apps) only has `select` on `is_active = true` rows \u2014 the apps never write to this table, they only read it via `SupabaseClient.fetchActiveTemplates()`.\n\nThere's also a separate `user_cards` table (per-user wallet) defined in the schema, but it currently has ",
+      "usage": {
+        "in": 12,
+        "out": 1115,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 25,
+      "section": "trace",
+      "n_expected": 5,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 5,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt, app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt, app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt\n\n`CardWiseComponents.kt` defines shared Compose UI pieces (`ScreenContainer`, `CardWiseTopAppBar`, `MerchantSearchField`, `BestCardResult`, `CategoryChips`, `ComparisonRow`, `CardConditionsSheet`, `TemplateRow`, `OfficialBadge`, `EmptyState`, `BenefitPill`). They're consumed by:\n\n- **`CardWiseApp.kt`** \u2014 uses `CardWiseTopAppBar` in the Scaffold's `topBar`.\n- **`HomeScreen.kt`** \u2014 `HomeMainScreen`/`CheatSheetScreen` use `ScreenContainer`, `MerchantSearchField`, `BestCardResult`, `CategoryChips`, `ComparisonRow`, `CardConditionsSheet`, `EmptyState`.\n- **`WalletScreen.kt`** \u2014 `WalletCardsScreen`/`AddCardScreen`/`RequestCardScreen` use `ScreenContainer`, `TemplateRow`, `EmptyState`.\n- **`SettingsScreen.kt`** \u2014 `SettingsMainScreen`/`CardBonusesScreen`/`CategoryPickerScreen` use `ScreenContainer` and `EmptyState`.\n\n`OfficialBadge` is used internally within `TemplateRow` in the same file; `BenefitPill` doesn't appear to have any call sites in the provided source.",
+      "usage": {
+        "in": 16,
+        "out": 1268,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 26,
+      "section": "cross-platform",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+        "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 5,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/domain/RecommendationEngine.kt, ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift, ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift, ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift, app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt\n\nYes \u2014 the two engines are deliberately parallel ports and implement identical logic:\n\n- Same precedence chain for picking a reward rule: Discover-active rule \u2192 user boost rule \u2192 merchant-exact rule \u2192 best applicable (category or `OTHER`, channel-compatible, tie broken in favor of the category-specific over `OTHER`) \u2192 a zero-value \"No listed reward\" fallback.\n- Same channel-compatibility check (`rule.channel == null || rule.channel == channel`).\n- Same sorting for ranked cards (rank value descending, then display name) and the same `bestByCategory` ordering (all categories, `OTHER` last).\n- Same human-readable reason-string construction, including the \"For X purchases\" vs \"X is treated as Y\" branching.\n\nThis parity is intentional and verified: `ios/CardWiseKit/Tests/.../RecommendationEngineTests.swift` and `TestSeedData.swift` are explicit line-for-line ports of the Android `RecommendationEngineTest.kt`/`SeedData.kt` fixtures (\"Port of Android's RecommendationEngineTest \u2014 same cases, same fixtures\"), covering the same merchants, wallets, and expected benefits/rank values on both platforms, so the same input (resolved merchant/category, template",
+      "usage": {
+        "in": 31,
+        "out": 925,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 27,
+      "section": "cross-platform",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+        "ios/CardWise/Sources/SettingsView.swift",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "ios/CardWise/Sources/RootView.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+        "ios/CardWise/Sources/Components.swift"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 6,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt, ios/CardWise/Sources/SettingsView.swift, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, ios/CardWise/Sources/RootView.swift, ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift, ios/CardWise/Sources/Components.swift\n\nThe two screens are functionally equivalent (Privacy card, \"Activate card bonuses\" row, catalog-sync card, theme picker, About) but differ in platform mechanics:\n\n- **Navigation**: Android models Settings as a `SettingsRoute` sealed `NavKey` back stack rendered through `NavDisplay` with custom slide/fade transition specs, and a shared `CardWiseTopAppBar` whose title is derived from the current route (`titleFor` in `CardWiseApp.kt`). iOS just uses a native `NavigationStack` + `NavigationPath` with `SettingsDestination` enum cases and per-view `.navigationTitle` \u2014 no custom transition code needed.\n- **Notification permission**: Android must explicitly request `POST_NOTIFICATIONS` on API 33+ via `rememberLauncherForActivityResult`/`ContextCompat.checkSelfPermission` before scheduling the quarterly reminder. iOS just calls `ReminderScheduler.enable()` (async `UNUserNotificationCenter.requestAuthorization`) with no OS-version branching, and `AppViewModel.setQuarterlyReminder` returns whether permission was granted instead of using a permission-launcher callback.\n- **Haptics**: Android explicitly fires `LocalHapticFeedback`/`HapticFeedbackType.LongPress` on every Switch toggle in Settings; iOS r",
+      "usage": {
+        "in": 20,
+        "out": 2558,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 28,
+      "section": "cross-platform",
+      "n_expected": 2,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/nav/Routes.kt",
+        "ios/CardWise/Sources/WalletView.swift",
+        "ios/CardWise/Sources/RootView.swift",
+        "ios/README.md"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 6,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt, app/src/main/java/com/cardwise/ui/CardWiseApp.kt, app/src/main/java/com/cardwise/ui/nav/Routes.kt, ios/CardWise/Sources/WalletView.swift, ios/CardWise/Sources/RootView.swift, ios/README.md\n\nThe two wallet screens are functionally equivalent (same wallet/add/request flow, same region-filtered Add-card list) but differ in platform idioms:\n\n- **Navigation**: Android models the tab as a Navigation 3 back stack of typed `WalletRoute` keys (`Cards`, `Add`, `Request`) rendered by `NavDisplay`/`NavEntry` in `CardWiseApp.kt`; iOS uses a plain `NavigationStack` + `NavigationPath` with a `WalletDestination` enum (`addCard`, `requestCard`) in `WalletView.swift`/`RootView.swift`.\n- **Lists**: Android uses `LazyColumn`/`items()`; iOS uses a `ScrollView` with `LazyVStack`, and relies on SwiftUI's `.searchable` modifier for the Add-card search box instead of an explicit `OutlinedTextField`.\n- **Remove-card confirmation**: Android shows the `AlertDialog` inline per-card (`WalletCard` composable) with haptic feedback on confirm; iOS hoists a single `.alert` bound to a `cardPendingRemoval` state var at the screen level, with slightly different confirmation copy.\n- **Feedback style**: Android uses `Toast` messages for adding a card and for a submitted card request (`CardWiseApp.kt`, `WalletScreen.kt`'s `RequestCardScreen`); iOS deliberately avoids toasts (documented decision in `ios/README.md`) and instead uses `.sensoryFeedback` ",
+      "usage": {
+        "in": 21,
+        "out": 2017,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 29,
+      "section": "cross-platform",
+      "n_expected": 4,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt",
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseClient.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+        "admin/js/cards.js",
+        "admin/js/card-form.js"
+      ],
+      "missed": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "covered": false,
+      "n_cited": 6,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt, app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt, ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseClient.swift, ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift, admin/js/cards.js, admin/js/card-form.js\n\nThe fields of `official_card_templates` that all three clients (Android, iOS, and the admin web tool) read and/or write are:\n\n- **id**\n- **issuer**\n- **name**\n- **version**\n- **region**\n- **reviewed_at**\n- **rewards_json**\n- **source_urls**\n\nDetails:\n- Android's `SupabaseClient.fetchActiveTemplates()` selects `id,issuer,name,version,rewards_json,reviewed_at,source_urls,region`, matched exactly by iOS's `SupabaseClient.fetchActiveTemplates()`.\n- The admin's `cards.js` list view selects `id, issuer, name, version, region, reviewed_at, is_active`, and `card-form.js` reads/writes the full row (including `rewards_json` and `source_urls`) when creating/editing a template.\n\n`is_active` is used only by Android/iOS as a query filter (`is_active=eq.true`) but is not decoded into their `CardTemplateDto`, whereas the admin tool actually selects, displays, and toggles it \u2014 so it isn't a field genuinely \"used\" (i.e., consumed as data) by all three.",
+      "usage": {
+        "in": 20,
+        "out": 1537,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    },
+    {
+      "id": 30,
+      "section": "cross-platform",
+      "n_expected": 3,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+        "admin/js/card-form.js"
+      ],
+      "missed": [],
+      "covered": true,
+      "n_cited": 3,
+      "truncated": false,
+      "stop_reason": "end_turn",
+      "answer": "CITED: app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt, ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift, admin/js/card-form.js\n\nNo \u2014 it's similar in spirit but not identical, and the two layers validate different things:\n\n**Android and iOS are identical to each other.** Both `CardTemplateDto.toDomain()` implementations (Kotlin's `SupabaseDtos.kt`, Swift's `SupabaseDtos.swift`) apply the same tolerant, data-decoding validation: unknown reward-rule categories are silently dropped, and if *all* rules in a template are unknown, the whole template is dropped. Neither app enforces that a template have an `OTHER` fallback rule \u2014 the `RecommendationEngine`/`RecommendationEngine.swift` just falls back to `\"No listed reward\" / rank 0.0` if none exists.\n\n**The admin panel (`card-form.js`) enforces different, stricter rules at authoring time**, which the apps don't replicate:\n- Requires at least one reward rule to save at all (`alert('Add at least one reward rule.')`).\n- Requires each rule to have a non-blank `reward_label` and a numeric `rank_value`.\n- Warns (via a `confirm()` dialog, not a hard block) if no rule uses category `other`, explaining that templates with no recognized rules get dropped client-side.\n- Lowercases merchant keys before saving.\n\nSo the admin tool performs proactive input validation to prevent bad data from ever reaching Supabase, while the Android/iOS clients only perform defensive, tolerant parsing of whatever data they receive (dropping w",
+      "usage": {
+        "in": 26,
+        "out": 1379,
+        "cache_read": 193223,
+        "cache_write": 0
+      }
+    }
+  ]
+}
