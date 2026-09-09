@@ -67,9 +67,15 @@ def main() -> int:
     if not available:
         raise SystemExit("no vectors found; run embed.py on each arm first")
 
-    from embed import embed_texts
-    qvecs = embed_texts([q["q"] for q in spec], "query")
-    qvecs /= np.linalg.norm(qvecs, axis=1, keepdims=True)
+    # Question vectors are cached: re-scoring and diagnosis then cost nothing.
+    qcache = Path("eval/questions.npz")
+    if qcache.exists() and len(np.load(qcache)["vectors"]) == len(spec):
+        qvecs = np.load(qcache)["vectors"]
+    else:
+        from embed import embed_texts
+        qvecs = embed_texts([q["q"] for q in spec], "query")
+        qvecs /= np.linalg.norm(qvecs, axis=1, keepdims=True)
+        np.savez(qcache, vectors=qvecs)
 
     results = {}
     for arm, npz in available.items():
@@ -84,6 +90,10 @@ def main() -> int:
                 "n_expected": len(exp),
                 "at_k": exp <= files_at_k(order, paths, args.k),
                 "at_budget": exp <= files_in_budget(order, paths, tokens, args.budget),
+                # What actually came back, so a failure can be diagnosed
+                # instead of guessed at.
+                "retrieved": [str(paths[i]) for i in order[:args.k]],
+                "missed": sorted(exp - files_at_k(order, paths, args.k)),
             })
         results[arm] = rows
 

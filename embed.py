@@ -6,8 +6,11 @@ with input_type="document" and questions with input_type="query": Voyage
 embeds the two asymmetrically, and getting it wrong degrades retrieval in a
 way that looks exactly like a bad chunking strategy.
 
+The API key is read from VOYAGE_API_KEY, which is loaded from a .env file
+next to this script if one exists. An already-exported variable wins.
+
 Usage:
-    export VOYAGE_API_KEY=...
+    echo 'VOYAGE_API_KEY=...' > .env      # or: export VOYAGE_API_KEY=...
     python embed.py corpus/chunks.jsonl
     python embed.py corpus/chunks-hybrid.jsonl
 """
@@ -19,12 +22,32 @@ from pathlib import Path
 
 import numpy as np
 
+
+def load_dotenv(path: Path = Path(".env")) -> None:
+    """Minimal .env reader. The key never belongs in the repo, and .env is
+    gitignored -- this just saves exporting it in every shell."""
+    if not path.exists():
+        return
+    for line in path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip().strip("'\""))
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).with_name(".env"))
+except ImportError:
+    pass  # fall back to whatever is already exported
+
 MODEL = "voyage-code-4"
 BATCH = 64
 
 
 def embed_texts(texts: list[str], input_type: str) -> np.ndarray:
     import voyageai
+    load_dotenv()
     if not os.environ.get("VOYAGE_API_KEY"):
         raise SystemExit("error: VOYAGE_API_KEY is not set")
     client = voyageai.Client()
