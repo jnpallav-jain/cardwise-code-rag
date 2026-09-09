@@ -1,0 +1,20 @@
+# The corpus is the CardWise private source code, verbatim, as JSON.
+# This repo is public. Never commit it.
+corpus/
+
+# Retrieval artifacts derived from the corpus -- same exposure, same rule.
+# Scoped to directories rather than *.jsonl, so eval results stay committable.
+# Anything derived from the private source belongs in one of these.
+index/
+embeddings/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# macOS
+.DS_Store
