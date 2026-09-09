@@ -1,4 +1,4 @@
-# CardWise RAG — Eval Set (draft, needs verification)
+# CardWise RAG — Eval Set
 
 **Status:** verified by Pallav, Sept 9 2026. Questions 8, 16 and 17 were replaced after verification; re-verify those three, then freeze the set.
 
