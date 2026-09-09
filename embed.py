@@ -1,0 +1,62 @@
+"""
+Embed a corpus arm with voyage-code-4 and cache the vectors.
+
+Vectors are cached per arm so re-scoring costs nothing. Chunks are embedded
+with input_type="document" and questions with input_type="query": Voyage
+embeds the two asymmetrically, and getting it wrong degrades retrieval in a
+way that looks exactly like a bad chunking strategy.
+
+Usage:
+    export VOYAGE_API_KEY=...
+    python embed.py corpus/chunks.jsonl
+    python embed.py corpus/chunks-hybrid.jsonl
+"""
+
+import json
+import os
+import sys
+from pathlib import Path
+
+import numpy as np
+
+MODEL = "voyage-code-4"
+BATCH = 64
+
+
+def embed_texts(texts: list[str], input_type: str) -> np.ndarray:
+    import voyageai
+    if not os.environ.get("VOYAGE_API_KEY"):
+        raise SystemExit("error: VOYAGE_API_KEY is not set")
+    client = voyageai.Client()
+    out = []
+    for i in range(0, len(texts), BATCH):
+        batch = texts[i:i + BATCH]
+        r = client.embed(batch, model=MODEL, input_type=input_type)
+        out.extend(r.embeddings)
+        print(f"  embedded {min(i + BATCH, len(texts))}/{len(texts)}", file=sys.stderr)
+    return np.array(out, dtype=np.float32)
+
+
+def main() -> int:
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 1
+    corpus = Path(sys.argv[1])
+    recs = [json.loads(l) for l in corpus.open()]
+    print(f"{corpus.name}: {len(recs)} chunks, "
+          f"{sum(r['tokens'] for r in recs):,} tokens", file=sys.stderr)
+
+    vecs = embed_texts([r["text"] for r in recs], "document")
+    vecs /= np.linalg.norm(vecs, axis=1, keepdims=True)
+
+    out = corpus.with_suffix(".npz")
+    np.savez(out, vectors=vecs,
+             ids=np.array([r["id"] for r in recs]),
+             paths=np.array([r["path"] for r in recs]),
+             tokens=np.array([r["tokens"] for r in recs]))
+    print(f"wrote {out}  shape={vecs.shape}")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
