@@ -1,0 +1,500 @@
+{
+  "corpus": "corpus/chunks-uniform-noheader.jsonl",
+  "budget": 4800,
+  "model": "claude-sonnet-5",
+  "rows": [
+    {
+      "id": 1,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4579,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 2,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/AppState.kt"
+      ],
+      "n_chunks": 12,
+      "used_tokens": 4263,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 3,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4611,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 4,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/SeedData.kt",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+        "supabase/seed.sql",
+        "app/src/main/java/com/cardwise/data/CatalogStore.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CatalogStore.swift"
+      ],
+      "n_chunks": 11,
+      "used_tokens": 4321,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 5,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt"
+      ],
+      "n_chunks": 10,
+      "used_tokens": 4646,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 6,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "admin/js/config.js",
+        "ios/CardWise/Config.sample.xcconfig",
+        "ios/CardWise/Sources/CardWiseApp.swift",
+        "app/build.gradle.kts",
+        "supabase/config.toml"
+      ],
+      "n_chunks": 16,
+      "used_tokens": 4611,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 7,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "admin/js/card-form.js"
+      ],
+      "n_chunks": 12,
+      "used_tokens": 3766,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 8,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "supabase/migrations/20260708000000_init.sql",
+        "supabase/schema.sql"
+      ],
+      "n_chunks": 12,
+      "used_tokens": 4046,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 9,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/MainActivity.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/nav/Routes.kt",
+        "app/src/main/AndroidManifest.xml"
+      ],
+      "n_chunks": 12,
+      "used_tokens": 4690,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 10,
+      "section": "locate",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "ios/CardWise/Sources/WalletView.swift"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4772,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 11,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+        "app/src/main/java/com/cardwise/domain/Models.kt"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4608,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 12,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": false,
+      "cited": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "ios/CardWise/Sources/AppViewModel.swift",
+        "app/src/main/java/com/cardwise/ui/AppState.kt"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4623,
+      "missed": [
+        "app/src/main/java/com/cardwise/data/CatalogStore.kt",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 13,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "ios/CardWise/Sources/HomeView.swift",
+        "ios/CardWise/Sources/AppViewModel.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift"
+      ],
+      "n_chunks": 11,
+      "used_tokens": 4654,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 14,
+      "section": "explain",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+        "admin/js/categories.js",
+        "app/src/main/java/com/cardwise/domain/Models.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4782,
+      "missed": [
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 15,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+        "ios/CardWise/Sources/AppViewModel.swift",
+        "ios/CardWise/Sources/WalletView.swift"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4751,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 16,
+      "section": "explain",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "supabase/migrations/20260708000000_init.sql",
+        "supabase/migrations/20260717100000_add_region.sql",
+        "supabase/migrations/20260714000000_rename_card_request_issuer_to_description.sql"
+      ],
+      "n_chunks": 16,
+      "used_tokens": 4603,
+      "missed": [
+        "supabase/migrations/20260718100000_channel_rewards.sql"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 17,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "admin/js/supabaseClient.js",
+        "admin/js/config.js",
+        "admin/js/card-form.js",
+        "docs/api.md"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 3943,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 18,
+      "section": "explain",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "ios/CardWise/UITests/SmokeTests.swift"
+      ],
+      "n_chunks": 13,
+      "used_tokens": 4683,
+      "missed": [
+        ".github/workflows/ci.yml"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 19,
+      "section": "explain",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt"
+      ],
+      "n_chunks": 13,
+      "used_tokens": 4614,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 20,
+      "section": "explain",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "ios/CardWiseKit/Package.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CardWiseRepository.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/CatalogStore.swift",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/TestSeedData.swift",
+        "ios/CardWise/Sources/CardWiseApp.swift",
+        "ios/CardWise/Sources/RootView.swift",
+        "ios/CardWise/Sources/AppViewModel.swift",
+        "ios/CardWise/Sources/RegionResolver.swift",
+        "ios/CardWise/Sources/Theme.swift",
+        "ios/CardWise/Sources/WalletView.swift",
+        "ios/CardWise/UITests/SmokeTests.swift",
+        ".github/workflows/ios.yml"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4619,
+      "missed": [
+        "ios/README.md"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 21,
+      "section": "trace",
+      "retrieval_recall": true,
+      "covered": false,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "app/src/main/java/com/cardwise/ui/AppState.kt"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4730,
+      "missed": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 22,
+      "section": "trace",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/AppState.kt",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "n_chunks": 10,
+      "used_tokens": 4486,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 23,
+      "section": "trace",
+      "retrieval_recall": true,
+      "covered": false,
+      "cited": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseClient.kt"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4534,
+      "missed": [
+        "app/src/main/java/com/cardwise/data/CardWiseRepository.kt",
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 24,
+      "section": "trace",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "admin/js/card-form.js",
+        "admin/js/cards.js",
+        "supabase/migrations/20260714130000_add_rh_bofa_venmo_hd_tjx.sql",
+        "supabase/migrations/20260717000000_add_india_cards.sql",
+        "supabase/migrations/20260718000000_add_india_cards_batch2.sql"
+      ],
+      "n_chunks": 6,
+      "used_tokens": 4464,
+      "missed": [
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 25,
+      "section": "trace",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/components/CardWiseComponents.kt",
+        "app/src/main/java/com/cardwise/ui/screens/HomeScreen.kt",
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt"
+      ],
+      "n_chunks": 11,
+      "used_tokens": 4500,
+      "missed": [
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 26,
+      "section": "cross-platform",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/domain/RecommendationEngine.kt",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/RecommendationEngine.swift",
+        "app/src/test/java/com/cardwise/domain/RecommendationEngineTest.kt",
+        "ios/CardWiseKit/Tests/CardWiseKitTests/RecommendationEngineTests.swift"
+      ],
+      "n_chunks": 15,
+      "used_tokens": 4565,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 27,
+      "section": "cross-platform",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/SettingsScreen.kt",
+        "ios/CardWise/Sources/SettingsView.swift",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt",
+        "ios/CardWise/Sources/RootView.swift"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4596,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 28,
+      "section": "cross-platform",
+      "retrieval_recall": true,
+      "covered": true,
+      "cited": [
+        "app/src/main/java/com/cardwise/ui/screens/WalletScreen.kt",
+        "ios/CardWise/Sources/WalletView.swift",
+        "ios/CardWise/Sources/RootView.swift",
+        "app/src/main/java/com/cardwise/ui/CardWiseApp.kt"
+      ],
+      "n_chunks": 13,
+      "used_tokens": 4400,
+      "missed": [],
+      "truncated": false
+    },
+    {
+      "id": 29,
+      "section": "cross-platform",
+      "retrieval_recall": true,
+      "covered": false,
+      "cited": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt",
+        "admin/js/cards.js",
+        "admin/js/card-form.js",
+        "supabase/schema.sql"
+      ],
+      "n_chunks": 11,
+      "used_tokens": 4627,
+      "missed": [
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+        "supabase/migrations/20260708000000_init.sql"
+      ],
+      "truncated": false
+    },
+    {
+      "id": 30,
+      "section": "cross-platform",
+      "retrieval_recall": false,
+      "covered": false,
+      "cited": [
+        "admin/js/card-form.js",
+        "ios/CardWiseKit/Sources/CardWiseKit/Data/SupabaseDtos.swift",
+        "ios/CardWiseKit/Sources/CardWiseKit/Domain/Models.swift",
+        "app/src/main/java/com/cardwise/domain/Models.kt"
+      ],
+      "n_chunks": 14,
+      "used_tokens": 4738,
+      "missed": [
+        "app/src/main/java/com/cardwise/data/remote/SupabaseDtos.kt"
+      ],
+      "truncated": false
+    }
+  ]
+}
