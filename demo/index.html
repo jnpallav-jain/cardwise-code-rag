@@ -278,10 +278,18 @@
       '</div></details>';
   }
 
+  var CORPUS_PATHS = {};
+  CHUNKS.forEach(function(c){ CORPUS_PATHS[c.p] = true; });
+
   function splitCited(text){
-    var m = text.match(/^\s*CITED:\s*(.+?)(?:\n|$)/);
+    // [ \t]* not \s*: \s matches newlines, so an empty "CITED:" line would
+    // capture the answer's first line and comma-split it into fake paths.
+    var m = text.match(/^[ \t]*CITED:[ \t]*([^\n]*)/);
     if(!m) return {cited:[], body:text};
-    var paths = m[1].split(",").map(function(s){ return s.trim(); }).filter(Boolean);
+    var paths = m[1].split(",").map(function(s){ return s.trim(); })
+      // Only real corpus paths. A model that cites something it was not given
+      // should show as zero citations, not as a plausible-looking filename.
+      .filter(function(s){ return s && CORPUS_PATHS[s]; });
     return {cited:paths, body:text.slice(m[0].length).replace(/^\s+/, "")};
   }
 
