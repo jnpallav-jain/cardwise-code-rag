@@ -210,7 +210,8 @@ chunk.py        stage-2 splitting: hybrid and uniform modes
 embed.py        voyage-code-4, cached per arm
 lexical.py      BM25 with a code-aware tokenizer, plus RRF
 score.py        retrieval scoring, three metrics
-generate.py     end-to-end RAG: retrieve, answer, cite
+ask.py          ask it anything: retrieve, answer, cite
+generate.py     end-to-end RAG over the frozen 30
 longcontext.py  the baseline: whole corpus, one prompt
 tracing.py      Phoenix spans for every retrieval
 eval/           frozen questions, resolved expectations, predictions, results

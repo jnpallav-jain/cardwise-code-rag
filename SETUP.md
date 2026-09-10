@@ -20,6 +20,13 @@ Run everything with `.venv/bin/python`, not `python3`:
 .venv/bin/python score.py --arm uniform-400 --retrieval rrf --strip-header
 ```
 
+Ask it a question outside the eval set:
+
+```bash
+.venv/bin/python ask.py "How does the recommendation engine rank cards?"
+.venv/bin/python ask.py --show-chunks "What writes to the cards table?"
+```
+
 The API key goes in `.env` (gitignored), read by `embed.py`:
 
 ```

@@ -91,6 +91,9 @@ def main() -> int:
             "cited": cited, "n_chunks": len(picked), "used_tokens": used,
             "missed": sorted(exp - set(cited)),
             "truncated": resp.stop_reason == "max_tokens",
+            # Keep the answer, not just the verdict: a wrong citation set is
+            # only diagnosable next to the text that produced it.
+            "answer": answer[:2000],
         })
         r = rows[-1]
         flag = "" if r["retrieval_recall"] == r["covered"] else \
