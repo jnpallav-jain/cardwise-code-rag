@@ -334,19 +334,32 @@
         ? claude.use("sample") : Promise.resolve(null);
     }catch(_){ pending = Promise.resolve(null); }
 
+    var prompt = SYSTEM + "\n\n---\n\n" + context +
+                 "\n\n---\n\nQuestion: " + question;
+
+    // Served from serve.py there is a local proxy that holds the API key;
+    // published as an artifact there is claude.use("sample"). Same page, both.
+    function viaLocalProxy(){
+      return fetch("api/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({prompt: prompt})
+      }).then(function(r){
+        if(!r.ok) throw {code: "proxy_" + r.status};
+        return r.json();
+      }).then(function(j){
+        // Surface what the proxy actually said. A real reason ("credit balance
+        // too low") is actionable; a generic "no Claude access here" sends the
+        // reader looking in the wrong place.
+        if(j.error) throw {code: "proxy_upstream", message: j.error};
+        return {text: j.text};
+      });
+    }
+
     pending.then(function(sample){
-      if(!sample){
-        stEl.className = "status";
-        stEl.textContent = "";
-        ansEl.innerHTML = '<p class="err">This view can\'t generate answers — the page needs ' +
-          'Claude access, which isn\'t available here. The retrieval below still ran, so you can ' +
-          'see which chunks the question pulled.</p>';
-        busy = false; goEl.disabled = false;
-        return;
-      }
+      if(!sample) return viaLocalProxy();
       return sample(
-        SYSTEM + "\n\n---\n\n" + context +
-        "\n\n---\n\nQuestion: " + question,
+        prompt,
         {
           modelTier: "quick",
           onText: function(ev){
@@ -378,6 +391,13 @@
         ? "Rate limited — wait a moment and ask again."
         : code === "not_granted"
         ? "Claude access wasn't granted, so the answer step can't run. Retrieval below still ran."
+        : code === "proxy_upstream"
+        ? "The local proxy reached the API and it refused: " + (e.message || "") +
+          "  (The published artifact does not use this key — it answers through " +
+          "the viewer's own Claude access.)"
+        : code.indexOf("proxy") === 0
+        ? "No answer backend. Published as an artifact this answers through the viewer; " +
+          "served locally it needs serve.py running, which holds the API key."
         : "Something went wrong generating the answer" + (code ? " (" + code + ")" : "") + ".";
       ansEl.innerHTML = '<p class="err">' + esc(msg) + '</p>';
     }).then(function(){

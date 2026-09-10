@@ -40,6 +40,18 @@ Tracing, optional. Start the collector first, then pass `--trace`:
 .venv/bin/python score.py --trace
 ```
 
+## Run the demo locally
+
+```bash
+.venv/bin/python serve.py            # http://localhost:8756
+```
+
+Retrieval (BM25) runs in the browser and needs nothing. The answer step needs
+an answer backend: served locally that is `serve.py`, which calls the API with
+the key from `.env` and never exposes it to the page. Published as an artifact
+the same file instead uses the viewer's own Claude access, so the deployed demo
+needs no key and no API credit at all.
+
 ## Corpus provenance
 
 The corpus is built from a working tree, not a pinned commit, so
