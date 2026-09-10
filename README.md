@@ -6,6 +6,15 @@ baseline.
 
 ---
 
+**[Try it](https://claude.ai/code/artifact/f3e43b83-9e0d-432c-b35b-ba3ce2fe418c)** — a working
+retrieval system whose corpus is this repository. Ask it a question, see exactly which chunks came
+back and what they scored, read the answer with citations. It retrieves with BM25 in the browser
+(dense embeddings need an API key, which cannot ship in a public page), so treat its hit rate as a
+demo, not as the measured result below.
+
+**[Results dashboard](https://claude.ai/code/artifact/8e71db70-d2c3-4872-833a-dda12cb31597)** — all
+six experiments, the falsified predictions, and the method.
+
 ## 1. The headline
 
 **Pasting the entire repository into one prompt beat the RAG pipeline, 25/30
