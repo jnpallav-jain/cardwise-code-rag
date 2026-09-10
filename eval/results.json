@@ -1,6 +1,7 @@
 {
   "budget": 4800,
   "k": 5,
+  "retrieval": "dense",
   "arms": {
     "whole-file": [
       {
