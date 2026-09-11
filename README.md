@@ -129,9 +129,11 @@ assembles them. A 10%-accuracy retriever fixing what a 53%-accuracy one missed.
 
 ## 4. What I predicted wrong
 
-Predictions were committed in
-[`eval/PREDICTIONS.md`](eval/PREDICTIONS.md) (`4ba6261`) **before the code that
-tested them existed**. The commit order is checkable in `git log`.
+Predictions 1 and 2 were committed in
+[`eval/PREDICTIONS.md`](eval/PREDICTIONS.md) (`4ba6261`, 15:05) **before the BM25
+code that tested them was committed** (`c319636`, 15:10) — checkable in
+`git log`. Predictions 3 and 4 were hypotheses stated during the work and then
+tested; they were not pre-registered, and are marked below.
 
 **Prediction 1 — "BM25 will lift trace above 60%."** *Wrong as stated, right by
 accident.* BM25 alone left trace at 1/5. Fused with dense it reached 4/5 at
@@ -145,6 +147,8 @@ measurement is its own lesson.
 worked correctly on the first attempt —
 `CardWiseComponents` → `{cardwisecomponents, card, wise, components}`. The real
 cause was IDF collapse, which I had not considered at all.
+
+*The next two were not pre-registered — stated during the work, then tested.*
 
 **Prediction 3 — "The `# File:` header is poisoning BM25."** *Wrong.* A clean,
 plausible diagnosis. Stripping the header moved BM25 from 3/30 to 4/30 —

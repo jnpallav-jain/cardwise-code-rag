@@ -1,0 +1,522 @@
+<title>CardWise Retrieval Eval</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ground:#FCFCFB;
+    --surface:#F3F4F5;
+    --surface-2:#E9EBEC;
+    --rule:#D8DCDE;
+    --rule-strong:#B6BCC0;
+    --ink:#16202A;
+    --ink-2:#42505C;
+    --ink-3:#6E7C88;
+    --rag:#1D6E9C;
+    --base:#B45F1E;
+    --rag-soft:#E2EDF4;
+    --base-soft:#F6E9DC;
+    --wrong:#8F3A34;
+    --wrong-soft:#F3E3E1;
+    --shadow:rgba(22,32,42,.07);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ground:#14181B;
+      --surface:#1C2225;
+      --surface-2:#252C30;
+      --rule:#2E363B;
+      --rule-strong:#485258;
+      --ink:#E7EBED;
+      --ink-2:#B0BABF;
+      --ink-3:#828E95;
+      --rag:#3E93C4;
+      --base:#D07C3A;
+      --rag-soft:#1B2C36;
+      --base-soft:#2E2318;
+      --wrong:#D4736A;
+      --wrong-soft:#2E1F1D;
+      --shadow:rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#14181B; --surface:#1C2225; --surface-2:#252C30;
+    --rule:#2E363B; --rule-strong:#485258;
+    --ink:#E7EBED; --ink-2:#B0BABF; --ink-3:#828E95;
+    --rag:#3E93C4; --base:#D07C3A;
+    --rag-soft:#1B2C36; --base-soft:#2E2318;
+    --wrong:#D4736A; --wrong-soft:#2E1F1D;
+    --shadow:rgba(0,0,0,.4);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:15px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:56px 28px 96px}
+
+  h1,h2,h3{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;text-wrap:balance;margin:0}
+  h1{font-size:clamp(30px,4.4vw,44px);font-weight:700;line-height:1.12;letter-spacing:-.015em}
+  h2{font-size:24px;font-weight:600;line-height:1.25;letter-spacing:-.01em}
+  h3{font-size:17px;font-weight:600;line-height:1.35}
+  p{margin:0}
+  a{color:var(--rag)}
+  code,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+  .num{font-variant-numeric:tabular-nums}
+
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+    letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);
+  }
+
+  header{display:flex;flex-direction:column;gap:14px;padding-bottom:34px}
+  .lede{font-size:17px;line-height:1.62;color:var(--ink-2);max-width:64ch}
+  .meta{display:flex;flex-wrap:wrap;gap:8px 20px;font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);padding-top:4px}
+  .meta span{white-space:nowrap}
+
+  section{padding:40px 0;border-top:1px solid var(--rule);display:flex;flex-direction:column;gap:22px}
+  .sec-head{display:flex;flex-direction:column;gap:7px}
+  .sec-head p{color:var(--ink-2);max-width:66ch}
+
+  /* ---- headline comparison ---- */
+  .verdict{
+    display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:0;
+    border:1px solid var(--rule);border-radius:3px;overflow:hidden;background:var(--surface);
+  }
+  .vcell{padding:26px 24px;display:flex;flex-direction:column;gap:9px;background:var(--ground)}
+  .vcell.win{box-shadow:inset 3px 0 0 var(--base)}
+  .vcell.lose{box-shadow:inset 3px 0 0 var(--rag)}
+  .vlabel{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--ink-2)}
+  .vscore{font-family:"Source Serif 4",Georgia,serif;font-size:46px;font-weight:700;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .vcell.win .vscore{color:var(--base)}
+  .vcell.lose .vscore{color:var(--rag)}
+  .vsub{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+  .vmid{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    padding:0 22px;background:var(--surface);border-left:1px solid var(--rule);border-right:1px solid var(--rule);
+  }
+  .vratio{font-family:"IBM Plex Mono",monospace;font-size:26px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+  .vratio-l{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);text-align:center;line-height:1.4}
+  @media(max-width:640px){
+    .verdict{grid-template-columns:1fr}
+    .vmid{border-left:0;border-right:0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:16px;flex-direction:row;gap:10px}
+  }
+
+  /* ---- charts ---- */
+  .legend{display:flex;gap:20px;align-items:center;font-size:13px;color:var(--ink-2)}
+  .lg{display:flex;gap:7px;align-items:center}
+  .sw{display:block;width:11px;height:11px;border-radius:2px;flex:none}
+
+  .chart{display:flex;flex-direction:column;gap:2px}
+  .grow{
+    display:grid;grid-template-columns:132px 1fr;gap:16px;align-items:center;
+    padding:11px 8px 11px 0;border-radius:2px;transition:background .12s;
+  }
+  .grow:hover{background:var(--surface)}
+  .glabel{display:flex;flex-direction:column;gap:1px}
+  .gname{font-size:14px;font-weight:500}
+  .gsub{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink-3)}
+  .gbars{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .bline{display:grid;grid-template-columns:1fr 52px;gap:12px;align-items:center}
+  .track{display:block;position:relative;height:15px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+  .fill{display:block;height:100%;border-radius:0 3px 3px 0;transition:width .5s cubic-bezier(.2,.7,.3,1)}
+  .fill.rag{background:var(--rag)}
+  .fill.base{background:var(--base)}
+  .bval{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink-2);text-align:right}
+  .axis{display:grid;grid-template-columns:132px 1fr;gap:16px;padding-top:8px;margin-top:4px;border-top:1px solid var(--rule)}
+  .ticks{display:grid;grid-template-columns:1fr 52px;gap:12px}
+  .tickrow{display:flex;justify-content:space-between;font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink-3)}
+
+  /* ---- single-series bars ---- */
+  .srow{display:grid;grid-template-columns:230px 1fr 68px;gap:14px;align-items:center;padding:8px 8px 8px 0;border-radius:2px;transition:background .12s}
+  .srow:hover{background:var(--surface)}
+  .sname{font-size:13.5px}
+  .sname em{font-style:normal;color:var(--ink-3);font-family:"IBM Plex Mono",monospace;font-size:11px;display:block}
+  .strack{display:block;position:relative;height:13px;background:var(--surface-2);border-radius:2px;overflow:hidden}
+  .sfill{display:block;height:100%;border-radius:0 3px 3px 0}
+  .sval{font-family:"IBM Plex Mono",monospace;font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right;color:var(--ink-2)}
+
+  /* ---- tables ---- */
+  .tscroll{overflow-x:auto;border:1px solid var(--rule);border-radius:3px}
+  table{border-collapse:collapse;width:100%;min-width:520px;font-size:13.5px}
+  th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--rule)}
+  thead th{
+    font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;
+    color:var(--ink-3);font-weight:500;background:var(--surface);white-space:nowrap;
+  }
+  tbody tr:last-child td{border-bottom:0}
+  tbody tr:hover{background:var(--surface)}
+  td.n{font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+  td.win{color:var(--base);font-weight:600}
+
+  /* ---- predictions ---- */
+  .preds{display:flex;flex-direction:column;gap:0;border-top:1px solid var(--rule)}
+  .pred{display:grid;grid-template-columns:26px 1fr;gap:16px;padding:20px 0;border-bottom:1px solid var(--rule)}
+  .pnum{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--ink-3);padding-top:3px;font-variant-numeric:tabular-nums}
+  .pbody{display:flex;flex-direction:column;gap:10px;min-width:0}
+  .ptop{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline}
+  .pquote{font-family:"Source Serif 4",Georgia,serif;font-size:17px;line-height:1.4;color:var(--ink)}
+  .chip{
+    font-family:"IBM Plex Mono",monospace;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+    padding:3px 7px;border-radius:2px;background:var(--wrong-soft);color:var(--wrong);white-space:nowrap;flex:none;
+  }
+  .pwhat{color:var(--ink-2);font-size:14.5px;line-height:1.6;max-width:70ch}
+  .pwhat strong{color:var(--ink);font-weight:600}
+
+  /* ---- callouts ---- */
+  .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .find{
+    border:1px solid var(--rule);border-radius:3px;padding:22px;
+    display:flex;flex-direction:column;gap:11px;background:var(--ground);
+  }
+  .find h3{font-size:16.5px}
+  .find p{font-size:14px;line-height:1.62;color:var(--ink-2)}
+  .delta{
+    display:flex;gap:10px;align-items:baseline;font-family:"IBM Plex Mono",monospace;
+    font-variant-numeric:tabular-nums;padding:11px 13px;background:var(--surface);border-radius:2px;font-size:13px;
+  }
+  .delta b{font-size:19px;font-weight:600;color:var(--rag)}
+  .delta .arrow{color:var(--ink-3)}
+  .delta .was{color:var(--ink-3);text-decoration:line-through}
+
+  ul.notes{margin:0;padding-left:19px;display:flex;flex-direction:column;gap:9px;color:var(--ink-2);font-size:14px;max-width:72ch}
+  ul.notes li::marker{color:var(--ink-3)}
+  ul.notes strong{color:var(--ink);font-weight:600}
+
+  .caveat{
+    border-left:2px solid var(--rule-strong);padding:4px 0 4px 18px;
+    display:flex;flex-direction:column;gap:8px;color:var(--ink-2);font-size:14px;max-width:72ch;
+  }
+  footer{padding-top:34px;border-top:1px solid var(--rule);color:var(--ink-3);font-size:13px;display:flex;flex-direction:column;gap:8px}
+
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+  a:focus-visible,tr:focus-visible{outline:2px solid var(--rag);outline-offset:2px}
+</style>
+
+<div class="wrap">
+
+  <header>
+    <span class="eyebrow">Evaluation report · September 2026</span>
+    <h1>Retrieval reached 76% of the ceiling on 4% of the context</h1>
+    <p class="lede">
+      Retrieval-augmented search over a private multi-platform codebase — Kotlin, Swift and SQL —
+      measured against a frozen thirty-question eval. Three chunking strategies landed within one
+      question of each other. What the answer actually depended on was the kind of question asked.
+    </p>
+    <div class="meta">
+      <span>119 files</span><span>193,173 tokens</span><span>voyage-code-4</span>
+      <span>30 questions, frozen</span><span>6 experiments</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Headline</span>
+      <h2>Long-context is the ceiling, not the system</h2>
+      <p>Both approaches scored on the same contract: the answer must cite every file it needed.</p>
+    </div>
+
+    <div class="verdict">
+      <div class="vcell win">
+        <span class="vlabel">Long-context — no retrieval</span>
+        <span class="vscore num">25/30</span>
+        <span class="vsub">193,173 tokens per question</span>
+      </div>
+      <div class="vmid">
+        <span class="vratio num">~25×</span>
+        <span class="vratio-l">context<br>per question</span>
+      </div>
+      <div class="vcell lose">
+        <span class="vlabel">RAG — retrieve, answer, cite</span>
+        <span class="vscore num">19/30</span>
+        <span class="vsub">~7,700 tokens per question</span>
+      </div>
+    </div>
+
+    <p class="pwhat" style="max-width:72ch">
+      Long-context is the measurement instrument here, not a candidate design: it sets the ceiling
+      that makes RAG's 19/30 interpretable. Retrieval reached <strong>76% of it on about 4% of the
+      context</strong>. As a system you'd actually run, long-context fails three ways — cost scales
+      with the corpus rather than the question; it depends on a warm cache (≈$0.05 a question on a
+      hit, ≈$0.40 on a miss, against ≈$0.025 for RAG); and at around five times this codebase's size
+      it no longer fits a 1M-token window at all.
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">The finding</span>
+      <h2>Question type mattered far more than chunking</h2>
+      <p>
+        Same retriever, same corpus, same run. Finding a file scored 100%; tracing what calls it
+        scored 20% — a 5× spread. Every chunking strategy tested moved the total by one question.
+      </p>
+    </div>
+
+    <div class="legend">
+      <span class="lg"><span class="sw" style="background:var(--base)"></span> Long-context</span>
+      <span class="lg"><span class="sw" style="background:var(--rag)"></span> RAG end-to-end</span>
+    </div>
+
+    <div class="chart">
+      <div class="grow">
+        <span class="glabel"><span class="gname">Locate</span><span class="gsub">10 questions</span></span>
+        <span class="gbars">
+          <span class="bline"><span class="track"><span class="fill base" style="width:100%"></span></span><span class="bval">100%</span></span>
+          <span class="bline"><span class="track"><span class="fill rag" style="width:100%"></span></span><span class="bval">100%</span></span>
+        </span>
+      </div>
+      <div class="grow">
+        <span class="glabel"><span class="gname">Cross-platform</span><span class="gsub">5 questions</span></span>
+        <span class="gbars">
+          <span class="bline"><span class="track"><span class="fill base" style="width:80%"></span></span><span class="bval">80%</span></span>
+          <span class="bline"><span class="track"><span class="fill rag" style="width:60%"></span></span><span class="bval">60%</span></span>
+        </span>
+      </div>
+      <div class="grow">
+        <span class="glabel"><span class="gname">Explain</span><span class="gsub">10 questions</span></span>
+        <span class="gbars">
+          <span class="bline"><span class="track"><span class="fill base" style="width:80%"></span></span><span class="bval">80%</span></span>
+          <span class="bline"><span class="track"><span class="fill rag" style="width:50%"></span></span><span class="bval">50%</span></span>
+        </span>
+      </div>
+      <div class="grow">
+        <span class="glabel"><span class="gname">Trace</span><span class="gsub">5 questions</span></span>
+        <span class="gbars">
+          <span class="bline"><span class="track"><span class="fill base" style="width:60%"></span></span><span class="bval">60%</span></span>
+          <span class="bline"><span class="track"><span class="fill rag" style="width:20%"></span></span><span class="bval">20%</span></span>
+        </span>
+      </div>
+      <div class="axis">
+        <span></span>
+        <span class="ticks">
+          <span class="tickrow"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></span>
+          <span></span>
+        </span>
+      </div>
+    </div>
+
+    <p class="pwhat" style="max-width:72ch">
+      The mechanism is plain once seen. A locate question has its answer in one file, and embedding
+      similarity is good at finding one file. A trace question requires following a reference
+      <em>between</em> files — <code>AppState.kt:221</code> calls <code>repository.recommend()</code>,
+      which reaches <code>CardWiseRepository.kt:31</code>, which instantiates the engine. An embedding
+      scores each file independently. It cannot follow anything.
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Every configuration</span>
+      <h2>Two counterintuitive results</h2>
+    </div>
+
+    <div class="two">
+      <div class="find">
+        <h3>Deleting the file path improved retrieval</h3>
+        <p>
+          Every chunk carried a <code># File: &lt;path&gt;</code> header so a chunk retrieved alone
+          would still say what it was. It cost 8,913 tokens across 334 chunks — 27 tokens repeated on
+          every fragment — about 7.4% of the corpus.
+        </p>
+        <div class="delta">
+          <span>trace</span><span class="was">20%</span><span class="arrow">→</span><b>60%</b>
+        </div>
+        <p>
+          Tripled by deleting text — the same gain predicted to require a second retriever.
+          Checked the obvious worry: strip every path and <em>locate</em> still scores 9/10, so that
+          number was real retrieval, not filename matching.
+        </p>
+      </div>
+
+      <div class="find">
+        <h3>BM25 alone scored 3/30</h3>
+        <p>
+          Lexical search should own trace questions — the answer is the file containing the literal
+          identifier. Instead it collapsed. Every path holds the product name, so <code>card</code>
+          appears in 272 of 334 chunks: the IDF signal that makes an identifier discriminating is
+          destroyed by a codebase named after itself.
+        </p>
+        <div class="delta">
+          <span>fused, trace</span><span class="was">1/5</span><span class="arrow">→</span><b>4/5</b>
+        </div>
+        <p>
+          Yet fused with dense retrieval it fixed what dense missed — a 10%-accuracy retriever
+          rescuing a 53%-accuracy one.
+        </p>
+      </div>
+    </div>
+
+    <div class="chart" style="margin-top:6px">
+      <div class="srow">
+        <span class="sname">Long-context <em>whole corpus, one prompt</em></span>
+        <span class="strack"><span class="sfill" style="width:83.3%;background:var(--base)"></span></span>
+        <span class="sval">25/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">Retrieval only — no header <em>uniform-400, best config</em></span>
+        <span class="strack"><span class="sfill" style="width:76.7%;background:var(--rag)"></span></span>
+        <span class="sval">23/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">RAG end-to-end <em>retrieve → answer → cite</em></span>
+        <span class="strack"><span class="sfill" style="width:63.3%;background:var(--rag)"></span></span>
+        <span class="sval">19/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">Retrieval only — with header <em>uniform-400</em></span>
+        <span class="strack"><span class="sfill" style="width:63.3%;background:var(--rag)"></span></span>
+        <span class="sval">19/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">RRF — dense + BM25 <em>reciprocal rank fusion</em></span>
+        <span class="strack"><span class="sfill" style="width:50%;background:var(--rag)"></span></span>
+        <span class="sval">15/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">Retrieval only — whole-file chunks <em>one chunk per file</em></span>
+        <span class="strack"><span class="sfill" style="width:40%;background:var(--rag)"></span></span>
+        <span class="sval">12/30</span>
+      </div>
+      <div class="srow">
+        <span class="sname">BM25 alone <em>lexical only</em></span>
+        <span class="strack"><span class="sfill" style="width:10%;background:var(--rag)"></span></span>
+        <span class="sval">3/30</span>
+      </div>
+    </div>
+
+    <div class="tscroll">
+      <table>
+        <thead>
+          <tr><th>Chunking strategy</th><th>recall@5</th><th>@5 distinct files</th><th>@4,800 tokens</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Whole-file</td><td class="n">16/30</td><td class="n">16/30</td><td class="n">12/30</td></tr>
+          <tr><td>Hybrid — split only files &gt;1,500 tokens</td><td class="n">17/30</td><td class="n">18/30</td><td class="n">17/30</td></tr>
+          <tr><td>Uniform-400</td><td class="n">16/30</td><td class="n">18/30</td><td class="n">19/30</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="pwhat">
+      Three chunking strategies, one question of spread under the metric the eval specified. The
+      metrics disagree because counting <em>chunks</em> lets whole-file read 4,759 tokens for its five
+      slots while uniform-400 reads 1,795 — so results are reported three ways, and where they
+      disagree, the disagreement is the finding.
+    </p>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Falsified</span>
+      <h2>What I predicted wrong</h2>
+      <p>
+        Predictions 01 and 02 were committed before the BM25 code that tested them — checkable in
+        <code>git log</code>. 03 and 04 were hypotheses stated during the work and then tested; they
+        were not pre-registered.
+      </p>
+    </div>
+
+    <div class="preds">
+      <div class="pred">
+        <span class="pnum">01</span>
+        <div class="pbody">
+          <div class="ptop">
+            <span class="pquote">“BM25 will lift trace above 60%.”</span>
+            <span class="chip">Wrong as stated</span>
+          </div>
+          <p class="pwhat">
+            BM25 alone left trace at <strong>1/5</strong>. Fused with dense it reached
+            <strong>4/5</strong> at equal context — but at recall@5, the metric actually specified, it
+            stayed at <strong>0/5</strong>. The prediction never named a metric, and the two metrics
+            disagreed completely. Right about the mechanism, wrong about the measurement.
+          </p>
+        </div>
+      </div>
+
+      <div class="pred">
+        <span class="pnum">02</span>
+        <div class="pbody">
+          <div class="ptop">
+            <span class="pquote">“The failure will be tokenization — BM25 won't split camelCase.”</span>
+            <span class="chip">Wrong</span>
+          </div>
+          <p class="pwhat">
+            The tokenizer worked on the first attempt:
+            <code>CardWiseComponents</code> → <code>{cardwisecomponents, card, wise, components}</code>.
+            The real cause was <strong>IDF collapse</strong>, which I had not considered at all.
+          </p>
+        </div>
+      </div>
+
+      <div class="pred">
+        <span class="pnum">03</span>
+        <div class="pbody">
+          <div class="ptop">
+            <span class="pquote">“The file-path header is poisoning BM25.”</span>
+            <span class="chip">Wrong</span>
+          </div>
+          <p class="pwhat">
+            A clean, plausible diagnosis. Stripping the header moved BM25 from 3/30 to
+            <strong>4/30</strong> — nothing. It did improve <em>dense</em> retrieval substantially,
+            which is how the finding above was discovered: by testing a wrong hypothesis and reading
+            the result carefully.
+          </p>
+        </div>
+      </div>
+
+      <div class="pred">
+        <span class="pnum">04</span>
+        <div class="pbody">
+          <div class="ptop">
+            <span class="pquote">“Long-context will win big on trace — it can follow a call graph.”</span>
+            <span class="chip">Wrong</span>
+          </div>
+          <p class="pwhat">
+            Long-context and the best RAG arm <strong>both scored 3/5</strong> on trace. The gap
+            between them sits entirely in <em>explain</em> (80% vs 50%). A model that sees every file
+            did not follow references better — it combined facts <em>across</em> files better.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="sec-head" style="padding-top:8px">
+      <h3>Six measurement bugs, and which way each one pointed</h3>
+    </div>
+    <ul class="notes">
+      <li><strong>max_tokens truncated answers before the citation line</strong> — scored as zero citations, indistinguishable from a wrong answer.</li>
+      <li><strong>A thinking block consumed an entire 2,048-token budget</strong> and returned no text at all. Same silent zero.</li>
+      <li><strong>tree-sitter cannot parse <code>ON CONFLICT … DO UPDATE SET</code></strong>, present in every migration here — so “structural” SQL chunking was mechanical slicing wearing a parser's name.</li>
+      <li><strong>Cutting only at top-level nodes</strong> turned a one-class Swift file into fixed-size chunks: structural chunking that wasn't.</li>
+      <li><strong>Comparing retrieval recall against citation coverage</strong> flattered RAG by four questions — recall measures whether a file was <em>available</em>, coverage whether it was <em>used</em>. That one is why the headline reads 19/30 and not 23/30.</li>
+      <li><strong>Token counts came from tiktoken and were reported as the model's</strong> — 113k, against the 193k Anthropic's tokenizer actually read. The one bug that flattered the baseline rather than RAG: long-context looked cheaper, and further from the context ceiling, than it is.</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="eyebrow">Method</span>
+      <h2>Corpus, eval, and what to distrust</h2>
+    </div>
+    <ul class="notes">
+      <li><strong>Corpus.</strong> 165 tracked files → 119 indexed: 113,256 tokens by <code>o200k_base</code>, 193,173 by Anthropic's tokenizer — the model counts this code 1.71× higher. Against <code>o200k_base</code>, an early <code>len(text)//4</code> estimate ran 5% high in aggregate but −28% to +25% per file — enough to reorder which files got split.</li>
+      <li><strong>Chunking.</strong> Structural via tree-sitter where the grammar parses, a hand-written scanner for SQL, fixed-size fallback on any parse error. Every file's fragments are asserted to reconcatenate into the original byte-for-byte before anything is written.</li>
+      <li><strong>Eval.</strong> Thirty questions in four categories, frozen before the first run. Ten prose cells were resolved into concrete paths in a separate file — never by editing the frozen one — each carrying a confidence and a note where the resolution narrows or extends the original.</li>
+      <li><strong>Store.</strong> A numpy array. At 119–334 chunks a vector database earns nothing.</li>
+    </ul>
+    <div class="caveat">
+      <p><strong>n = 30.</strong> A one-question difference is noise. Only the 12-vs-19 and 19-vs-25 gaps are worth defending.</p>
+      <p><strong>The long-context baseline is non-deterministic.</strong> Two runs disagreed on three questions. The retrieval arms are exactly reproducible; this is not.</p>
+      <p><strong>Two best-performing configurations were found post-hoc</strong> — <code>rrf body-only</code> and <code>no-header</code>. They need held-out questions before they are load-bearing.</p>
+      <p><strong>Cost figures are list-price estimates</strong>, and RAG's token count is extrapolated with the tokenizer ratio rather than measured on the API.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>Source corpus is a private repository and is not published. Code, frozen questions, recorded predictions and per-run write-ups live in the project repo.</p>
+    <p class="mono" style="font-size:12px">cardwise-code-rag · 6 experiments · voyage-code-4 + claude-sonnet-5</p>
+  </footer>
+
+</div>
