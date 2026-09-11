@@ -17,21 +17,34 @@ six experiments, the falsified predictions, and the method.
 
 ## 1. The headline
 
-**Pasting the entire repository into one prompt beat the RAG pipeline, 25/30
-against 19/30, while reading 25× more context per question.**
+**Long-context is the accuracy ceiling. RAG reached 76% of it while reading
+about 4% of the context — and unlike long-context, it keeps working when the
+codebase grows.**
 
-| approach | score | context per question |
-|---|---|---|
-| long-context (whole corpus, no retrieval) | **25/30** | 112,779 tokens |
-| RAG end-to-end (retrieve → answer → cite) | **19/30** | 4,528 tokens |
+| approach | score | context per question | cost per question* |
+|---|---|---|---|
+| long-context (whole corpus, no retrieval) | **25/30** | 193,173 tokens | ~$0.05 cache hit · ~$0.40 miss |
+| RAG end-to-end (retrieve → answer → cite) | **19/30** | ~7,700 tokens | ~$0.025 |
 
 Both are scored identically: the answer must cite every file it needed.
 
-That ratio is the real result. Retrieval costs 4% of the context and returns
-76% of the accuracy — a reasonable trade that the accuracy column alone would
-never justify. And it only holds because this corpus is small enough that the
-baseline is *available*: 113k tokens fits one prompt, 10× would not, and at
-that point retrieval stops being a choice.
+<sub>*`claude-sonnet-5` list prices. Long-context's token count is measured by
+the API; RAG's is its measured 4,528 `o200k_base` tokens scaled by the same
+1.71× that separates the two tokenizers on this corpus (see §5).</sub>
+
+Long-context is a measurement instrument here, not a candidate design. It
+answers one question — how good could an answer be if the model saw
+everything? — and that is what makes RAG's 19/30 interpretable. As a system
+you would actually run, it fails on three counts:
+
+- **Cost scales with the corpus, not the question.** Every question re-reads
+  all 193k tokens, whether it is hard or trivial.
+- **It depends on a warm cache.** The eval asked thirty questions back to back,
+  the best case for prompt caching, which is why long-context came out at only
+  ~2× RAG per question. Traffic spread across a day mostly misses a five-minute
+  cache and pays ~16×.
+- **It has a hard ceiling.** At roughly five times this codebase's size the
+  corpus no longer fits a 1M-token window, and there is no degraded mode.
 
 So the interesting question was never which retrieval strategy won. All three
 chunking strategies landed within one question of each other:
@@ -42,7 +55,7 @@ chunking strategies landed within one question of each other:
 | hybrid (split only files >1,500 tokens) | 17/30 |
 | uniform-400 | 16/30 |
 
-Three weeks of chunking work, one question of difference.
+Three chunking strategies, one question of difference.
 
 ## 2. What did matter: question type
 
@@ -159,6 +172,11 @@ than it was:
   parser's name.
 - Cutting only at top-level nodes turned a one-class Swift file into fixed-size
   chunks — structural chunking that wasn't.
+- Token counts came from tiktoken's `o200k_base` and were reported as the
+  corpus size — 113k. The model's own tokenizer read **193k**. I wrote that the
+  `len(text)//4` estimate ran 5% *high*; against the model actually used, it ran
+  38% low. This one flattered the baseline rather than RAG: long-context looked
+  cheaper, and further from the context ceiling, than it is.
 - Comparing retrieval recall against citation coverage flattered RAG by four
   questions, because recall measures whether a file was *available* and
   coverage measures whether it was *used*.
@@ -167,9 +185,13 @@ That last one is why §1 reports 19/30 and not 23/30.
 
 ## 5. Method
 
-**Corpus.** 165 tracked files → 119 indexed, **113,256 tokens** (`o200k_base`,
-measured — an early `len(text)//4` estimate was 5% high in aggregate but −28% to
-+25% per file, enough to reorder which files got split). 46 files excluded, all
+**Corpus.** 165 tracked files → 119 indexed. Two token counts, and the gap
+between them matters: **113,256 by `o200k_base`** (tiktoken — used for every
+chunk size and budget in this repo) and **193,173 by Anthropic's tokenizer**,
+read from the API's `cache_creation_input_tokens` when the long-context
+baseline cached the corpus. The model counts this code 1.71× higher. An early
+`len(text)//4` estimate was 5% high against `o200k_base` in aggregate but −28%
+to +25% per file, enough to reorder which files got split. 46 files excluded, all
 images, IDE state or build tooling; no source file is excluded, and the count
 is reconciled in `ingest.py`'s summary.
 
@@ -210,6 +232,9 @@ corpus is gitignored because it is private source code.
   `no-header`). They need held-out questions before they are load-bearing.
 - **The corpus is built from a working tree**, not a pinned commit. Any number
   should carry the source repo's HEAD.
+- **Cost figures are list-price estimates**, not billed amounts, and the RAG
+  token count is extrapolated with the tokenizer ratio rather than measured on
+  the API.
 
 ## Layout
 

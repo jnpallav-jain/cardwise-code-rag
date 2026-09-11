@@ -1,5 +1,11 @@
 # Run 6 — long-context baseline
 
+> **Correction.** The 112,779 figure below is tiktoken's `o200k_base` count.
+> The API's own `cache_creation_input_tokens` for the same corpus was
+> **193,173** — Anthropic's tokenizer counts this code 1.71× higher. Scores are
+> unaffected; the context-per-question and headroom figures understate reality.
+> The 23× context ratio holds, since both sides scale by the same factor.
+
 Whole corpus in one prompt, no retrieval. 112,779 tokens, claude-sonnet-5,
 each of the 30 frozen questions asked separately, corpus sent as a cached
 system block. Scored on the same expected-file sets: did the answer's `CITED:`
